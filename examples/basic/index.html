@@ -70,7 +70,7 @@ document.addEventListener('touchmove', function(e) {
 <script>
 // Setup three.js WebGL renderer. Note: Antialiasing is a big performance hit.
 // Only enable it if you actually need to.
-var renderer = new THREE.WebGLRenderer({antialias: false});
+var renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.setPixelRatio(Math.floor(window.devicePixelRatio));
 
 // Append the canvas element created by the renderer to document body element.
@@ -91,9 +91,9 @@ effect.setSize(window.innerWidth, window.innerHeight);
 
 
 // Add a repeating grid as a skybox.
-var boxWidth = 1;
-var loader = new THREE.TextureLoader();
-loader.load('img/box.png', onTextureLoaded);
+//var boxWidth = 10;
+//var loader = new THREE.TextureLoader();
+//loader.load('img/box.png', onTextureLoaded);
 
 // Get the VRDisplay and save it for later.
 var vrDisplay = null;
@@ -123,16 +123,29 @@ function onTextureLoaded(texture) {
 }
 
 // Create 3D objects.
-var geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+var geometry = new THREE.BoxGeometry(1,1,1);
 var material = new THREE.MeshNormalMaterial();
 var cube = new THREE.Mesh(geometry, material);
 
 // Position cube mesh
-cube.position.z = -2;
+cube.position.z = -5;
+
+// BKL add room
+    // Room.
+const roomGeometry = new THREE.BoxGeometry(20, 16, 15, 20, 16, 15);
+const roomMaterial = new THREE.MeshBasicMaterial({
+      wireframe: true,
+      opacity: 0.3,
+      transparent: true,
+      side: THREE.BackSide
+    });
+const room = new THREE.Mesh(roomGeometry, roomMaterial);
+
+    room.position.z = -5;
 
 // Add cube mesh to your three.js scene
 scene.add(cube);
-
+scene.add(room);
 // Request animation frame loop function
 var lastRender = 0;
 function animate(timestamp) {
@@ -194,3 +207,4 @@ function enterFullscreen (el) {
 </script>
 
 </html>
+
