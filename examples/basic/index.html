@@ -123,12 +123,12 @@ function onTextureLoaded(texture) {
 }
 
 // Create 3D objects.
-var geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+var geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
 var material = new THREE.MeshNormalMaterial();
 var cube = new THREE.Mesh(geometry, material);
 
 // Position cube mesh
-cube.position.z = -1;
+cube.position.z = -2;
 
 // Add cube mesh to your three.js scene
 scene.add(cube);
