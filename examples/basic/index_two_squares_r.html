@@ -127,8 +127,16 @@ var geometry = new THREE.BoxGeometry(1,1,1);
 var material = new THREE.MeshNormalMaterial();
 var cube = new THREE.Mesh(geometry, material);
 
+//BKL
+var geometry2 = new THREE.BoxGeometry(1,1,1);
+var material2 = new THREE.MeshNormalMaterial();
+var cube2 = new THREE.Mesh(geometry, material);
+
 // Position cube mesh
 cube.position.z = -5;
+cube2.position.z = -5;
+cube2.position.x = -2;
+cube2.position.y = 0;
 
 // BKL add room
     // Room.
@@ -145,6 +153,7 @@ const room = new THREE.Mesh(roomGeometry, roomMaterial);
 
 // Add cube mesh to your three.js scene
 scene.add(cube);
+scene.add(cube2);
 scene.add(room);
 // Request animation frame loop function
 var lastRender = 0;
@@ -154,16 +163,17 @@ function animate(timestamp) {
 
   // Apply rotation to cube mesh
   cube.rotation.y += delta * 0.0003;
-
+  cube2.rotation.x += delta * 0.0003;
+  
   // Update VR headset position and apply to camera.
   controls.update();
   //hide objects from the right eye
-  cube.visible = true;
+  cube2.visible = true;
   // Render the right eye scene.
   effect.right_render(scene, camera);
 
   // show objects to left eye
-  cube.visible = true;
+  cube2.visible = false;
   // render the left eye scene
   effect.left_render(scene, camera);
 
