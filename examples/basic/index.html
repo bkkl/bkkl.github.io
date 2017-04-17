@@ -160,6 +160,7 @@ function animate(timestamp) {
   //hide objects from the right eye
   cube.visible = true;
   // Render the right eye scene.
+  effect.render(scene, camera);
   effect.right_render(scene, camera);
 
   // show objects to left eye
