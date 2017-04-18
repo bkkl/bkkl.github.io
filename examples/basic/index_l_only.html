@@ -158,14 +158,14 @@ function animate(timestamp) {
   // Update VR headset position and apply to camera.
   //controls.update();
   //hide objects from the right eye
-  cube.visible = false;
+  //cube.visible = false;
   // Render the right eye scene.
-  effect.right_render(scene, camera);
+  //effect.right_render(scene, camera);
 
   // show objects to left eye
-  cube.visible = true;
+//  cube.visible = true;
   // render the left eye scene
-  effect.left_render(scene, camera);
+  effect.render(scene, camera);
 
   // Keep looping.
   vrDisplay.requestAnimationFrame(animate);
