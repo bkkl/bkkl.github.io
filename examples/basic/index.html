@@ -70,7 +70,7 @@ document.addEventListener('touchmove', function(e) {
 <script>
 // Setup three.js WebGL renderer. Note: Antialiasing is a big performance hit.
 // Only enable it if you actually need to.
-var renderer = new THREE.WebGLRenderer({antialias: true});
+var renderer = new THREE.WebGLRenderer({antialias: false});
 renderer.setPixelRatio(Math.floor(window.devicePixelRatio));
 
 // Append the canvas element created by the renderer to document body element.
@@ -91,9 +91,9 @@ effect.setSize(window.innerWidth, window.innerHeight);
 
 
 // Add a repeating grid as a skybox.
-//var boxWidth = 10;
-//var loader = new THREE.TextureLoader();
-//loader.load('img/box.png', onTextureLoaded);
+var boxWidth = 5;
+var loader = new THREE.TextureLoader();
+loader.load('img/box.png', onTextureLoaded);
 
 // Get the VRDisplay and save it for later.
 var vrDisplay = null;
@@ -119,33 +119,32 @@ function onTextureLoaded(texture) {
   });
 
   var skybox = new THREE.Mesh(geometry, material);
-  scene.add(skybox);
+//  scene.add(skybox);
 }
 
 // Create 3D objects.
-var geometry = new THREE.BoxGeometry(1,1,1);
+var geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
 var material = new THREE.MeshNormalMaterial();
 var cube = new THREE.Mesh(geometry, material);
 
 // Position cube mesh
 cube.position.z = -5;
 
-// BKL add room
-    // Room.
-const roomGeometry = new THREE.BoxGeometry(20, 16, 15, 20, 16, 15);
-const roomMaterial = new THREE.MeshBasicMaterial({
-      wireframe: true,
-      opacity: 0.3,
-      transparent: true,
-      side: THREE.BackSide
-    });
-const room = new THREE.Mesh(roomGeometry, roomMaterial);
+//BKL
+var geometry2 = new THREE.BoxGeometry(1,1,1);
+var material2 = new THREE.MeshNormalMaterial();
+var cube2 = new THREE.Mesh(geometry, material);
 
-    room.position.z = -5;
+// Position cube mesh
+
+cube2.position.z = -5;
+cube2.position.x = -2;
+cube2.position.y = 0;
+cube2.layers.set(1);
 
 // Add cube mesh to your three.js scene
 scene.add(cube);
-scene.add(room);
+scene.add(cube2);
 // Request animation frame loop function
 var lastRender = 0;
 function animate(timestamp) {
@@ -153,20 +152,14 @@ function animate(timestamp) {
   lastRender = timestamp;
 
   // Apply rotation to cube mesh
-  cube.rotation.y += delta * 0.0003;
+  cube.rotation.y += delta * 0.0006;
 
   // Update VR headset position and apply to camera.
   controls.update();
-  //hide objects from the right eye
-//  cube.visible = true;
-  // Render the right eye scene.
-//  effect.right_render(scene, camera);
 
-  // show objects to left eye
-//  cube.visible = true;
-  // render the left eye scene
-//  effect.left_render(scene, camera);
-	effect.render(scene, camera);
+  // Render the scene.
+  effect.render(scene, camera);
+
   // Keep looping.
   vrDisplay.requestAnimationFrame(animate);
 }
