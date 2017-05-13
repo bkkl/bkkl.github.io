@@ -116,10 +116,18 @@
 		<button id="reset">Reset</button>
 		</div>
 
-		<!-- three.js library -->
+		<!-- BKL Adding WebVR poly library -->
 		<script src="node_modules/three/build/three.js"></script>
+		<!-- VRControls.js applies the WebVR transformations to a three.js camera object. -->
+		<script src="node_modules/three/examples/js/controls/VRControls.js"></script>
+
+		<!-- VREffect.js handles stereo camera setup and rendering.  -->
+		<script src="node_modules/three/examples/js/effects/VREffect.js"></script>
+
+		<!-- A polyfill for the WebVR API.  -->
+		<script src="../../build/webvr-polyfill.js"></script>	
 		
-        <!-- <script type="text/javascript" src="js/Three.js"></script> -->
+		<!-- three.js library -->		
         <script type="text/javascript" src="js/Stats.js"></script>
         <script type="text/javascript" src="js/tetris.js"></script>
         <script type="text/javascript" src="js/tetris.board.js"></script>
