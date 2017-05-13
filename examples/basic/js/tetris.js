@@ -200,7 +200,7 @@ window.addEventListener('keydown', function (event) {
 
     switch (key) {
         //case
-
+		// BKL changed from arrows to use BT keyboard with phone
         case 73: // up (i)
             Tetris.Block.move(0, 1, 0);
             break;
@@ -237,6 +237,17 @@ window.addEventListener('keydown', function (event) {
         case 69: // (e)
             Tetris.Block.rotate(0, -90, 0);
             break;
+		// BKL adding keyboard commands 	
+		case 80: // (p)
+            Tetris.start();
+            break;	
+		case 70: // (p)
+            enterFullscreen(Tetris.renderer.domElement);
+            break;	
+		case 86: // (p)
+            Tetris.vrDisplay.requestPresent([{source: Tetris.renderer.domElement}]);
+            break;		
+			 
     }
 }, false);	
 
