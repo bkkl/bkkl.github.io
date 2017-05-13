@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<!-- BKL  -->
+<title>Web VR Polyfill - basic example</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, shrink-to-fit=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+	<!-- <title>Three.js Tetris</title> -->
+        <style>
+            body {margin: 0; padding: 0; overflow: hidden;}
+
+            #menu {
+                position: absolute;
+                width: 300px;
+                height: 250px;
+
+                top: 50%; left: 50%;
+                margin: -125px 0 0 -100px;
+
+                text-align: center;
+
+                border: 3px solid #fff;
+                border-radius: 15px;
+
+                background-color: #E36B23;
+                box-shadow: 2px 10px 5px #888;
+            }
+
+            #menu p {font-weight: bold; color: #fff;}
+            #menu p a {color: #fff;}
+
+            #menu button {
+                width: 80px;
+                height: 25px;
+
+                background-color: #C44032;
+
+                border: 3px solid #fff;
+                border-radius: 5px;
+
+                font-size: 14px;
+                font-weight: bold;
+                color: #fff;
+            }
+
+            #points {
+                position: absolute;
+                width: 120px;
+                height: 16px;
+
+                padding: 12px;
+
+                top: 40px;
+                right: 80px;
+
+                border: 3px solid #fff;
+                border-radius: 15px;
+
+                background-color: #E36B23;
+                box-shadow: 2px 10px 5px #888;
+
+                font-size: 14px;
+                font-weight: bold;
+                color: #fff;
+
+                text-align: right;
+
+                display: none;
+            }
+			<!-- BKL  -->
+			canvas {
+			  position: absolute;
+			  top: 0;
+			}
+
+			#buttons {
+			  position: fixed;
+			  top: 0;
+			  right: 0;
+			  z-index: 1;
+			  background: white;
+			}
+			
+        </style>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	</head>
+    <body>
+        <audio id="audio_theme" src="music/tetris.mp3" preload="auto"></audio>
+        <audio id="audio_move" src="music/move.mp3" preload="auto"></audio>
+        <audio id="audio_collision" src="music/collision.mp3" preload="auto"></audio>
+        <audio id="audio_gameover" src="music/gameover.mp3" preload="auto"></audio>
+        <audio id="audio_score" src="music/cash.mp3" preload="auto"></audio>
+
+        <div id="menu">
+            <h1>Three.js Tetris</h1>
+            <p>
+              Movement: arrows<br>
+              Rotation: AD/SW/QE<br>
+			  WebVR-polyfill Author: BKL<br>
+              Original Author: <a href="http://www.smashinglabs.pl">smashinglabs.pl</a>
+            </p>
+            <button id="play_button">Play</button>
+        </div>
+
+        <div id="points">
+            0
+        </div>
+		
+		<!-- BKL -->
+		<div id="buttons">
+		<button id="fullscreen">Fullscreen</button>
+		<button id="vr">VR (WebVR/Mobile only)</button>
+		<button id="reset">Reset</button>
+		</div>
+
+		<!-- three.js library -->
+		<script src="node_modules/three/build/three.js"></script>
+		
+        <!-- <script type="text/javascript" src="js/Three.js"></script> -->
+        <script type="text/javascript" src="js/Stats.js"></script>
+        <script type="text/javascript" src="js/tetris.js"></script>
+        <script type="text/javascript" src="js/tetris.board.js"></script>
+        <script type="text/javascript" src="js/tetris.block.js"></script>
+
+        <script src="js/cufon-yui.js" type="text/javascript"></script>
+        <script src="js/Blox_400.font.js" type="text/javascript"></script>
+
+        <script type="text/javascript">
+            Cufon.replace('#menu h1');
+            Cufon.replace('#points');
+        </script>
+    </body>
+</html>
