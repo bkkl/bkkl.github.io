@@ -92,6 +92,23 @@ Tetris.start = function () {
     Tetris.sounds["theme"].pause();
 	
     Tetris.Block.generate();
+	
+		//BKL 
+	// Apply VR stereo rendering to renderer.
+	Tetris.effect = new THREE.VREffect(Tetris.renderer);
+	Tetris.effect.setSize(window.innerWidth, window.innerHeight);
+	
+	// Get the VRDisplay and save it for later.
+	Tetris.vrDisplay = null;
+	navigator.getVRDisplays().then(function(displays) {
+	  if (displays.length > 0) {
+		Tetris.vrDisplay = displays[0];
+
+		// Kick off the render loop.
+		Tetris.vrDisplay.requestAnimationFrame(Tetris.animate);
+	  }
+	});
+	
     Tetris.animate();
 };
 
@@ -114,13 +131,35 @@ Tetris.animate = function () {
         Tetris.Block.move(0, 0, -1);
     }
 
-    Tetris.renderer.render(Tetris.scene, Tetris.camera);
-
+    //Tetris.renderer.render(Tetris.scene, Tetris.camera);
+	// BKL Render the VR scene.
+	Tetris.effect.render(Tetris.scene, Tetris.camera);
     Tetris.stats.update();
 
-    if (!Tetris.gameOver) window.requestAnimationFrame(Tetris.animate);
+	// BKL    if (!Tetris.gameOver) window.requestAnimationFrame(Tetris.animate);
+	if (!Tetris.gameOver) Tetris.vrDisplay.requestAnimationFrame(Tetris.animate);
 };
 
+//BKL  - adding Button click handlers for VR.
+document.querySelector('button#fullscreen').addEventListener('click', function() {
+  enterFullscreen(Tetris.renderer.domElement);
+});
+
+document.querySelector('button#vr').addEventListener('click', function() {
+  Tetris.vrDisplay.requestPresent([{source: Tetris.renderer.domElement}]);
+});
+
+function enterFullscreen (el) {
+  if (el.requestFullscreen) {
+    el.requestFullscreen();
+  } else if (el.mozRequestFullScreen) {
+    el.mozRequestFullScreen();
+  } else if (el.webkitRequestFullscreen) {
+    el.webkitRequestFullscreen();
+  } else if (el.msRequestFullscreen) {
+    el.msRequestFullscreen();
+  }
+}
 
 // nice test:
 // var i = 0, j = 0, k = 0, interval = setInterval(function() {if(i==6) {i=0;j++;} if(j==6) {j=0;k++;} if(k==6) {clearInterval(interval); return;} Tetris.addStaticBlock(i,j,k); i++;},30)
@@ -162,16 +201,16 @@ window.addEventListener('keydown', function (event) {
     switch (key) {
         //case
 
-        case 38: // up (arrow)
+        case 73: // up (i)
             Tetris.Block.move(0, 1, 0);
             break;
-        case 40: // down (arrow)
+        case 75: // down (k)
             Tetris.Block.move(0, -1, 0);
             break;
-        case 37: // left(arrow)
+        case 74: // left(j)
             Tetris.Block.move(-1, 0, 0);
             break;
-        case 39: // right (arrow)
+        case 76: // right (l)
             Tetris.Block.move(1, 0, 0);
             break;
         case 32: // space
