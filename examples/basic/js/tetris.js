@@ -26,22 +26,24 @@ Tetris.init = function () {
         HEIGHT = window.innerHeight;
 
     // set some camera attributes
-    var VIEW_ANGLE = 45,
+    var VIEW_ANGLE = 50,
         ASPECT = WIDTH / HEIGHT,
         NEAR = 0.1,
-        FAR = 10000;
+        FAR = 2000;
 
     // create a WebGL renderer, camera
     // and a scene
-    Tetris.renderer = new THREE.WebGLRenderer();
+    Tetris.renderer = new THREE.WebGLRenderer({antialias: true});
     Tetris.camera = new THREE.PerspectiveCamera(VIEW_ANGLE,
         ASPECT,
         NEAR,
         FAR);
+	Tetris.camera.zoom = 2;	
     Tetris.scene = new THREE.Scene();
 
     // the camera starts at 0,0,0 so pull it back
-    Tetris.camera.position.z = 600;
+    Tetris.camera.position.z = 500;
+	Tetris.camera.position.y = -100;
     Tetris.scene.add(Tetris.camera);
 
     // start the renderer
@@ -92,8 +94,32 @@ Tetris.start = function () {
     Tetris.sounds["theme"].pause();
 	
     Tetris.Block.generate();
+	//BKL test block
+	var geometry2 = new THREE.BoxGeometry(10,10,10);
+	var material2 = new THREE.MeshNormalMaterial();
+	var cube2 = new THREE.Mesh(geometry2, material2);
+	var cube3 = new THREE.Mesh(geometry2, material2);
+	var fit = new THREE.Object3D(); 
+	// Position cube mesh
+/*
+	cube2.position.z = 5;
+	cube2.position.x = 0;
+	cube2.position.y = 0;
+	cube2.layers.set(1);
 	
-		//BKL 
+	cube3.position.z = 5;
+	cube3.position.x = 0;
+	cube3.position.y = -10;
+	cube3.layers.set(0);
+	
+	fit.add(cube2);
+	fit.add(cube3);
+	
+	Tetris.scene.add(fit);
+*/	
+	// bkl 
+	
+	//BKL 
 	// Apply VR stereo rendering to renderer.
 	Tetris.effect = new THREE.VREffect(Tetris.renderer);
 	Tetris.effect.setSize(window.innerWidth, window.innerHeight);
@@ -109,10 +135,10 @@ Tetris.start = function () {
 	  }
 	});
 	
-    Tetris.animate();
+//    Tetris.animate();
 };
 
-Tetris.gameStepTime = 1000;
+Tetris.gameStepTime = 500;
 
 Tetris.frameTime = 0; // ms
 Tetris.cumulatedFrameTime = 0; // ms
@@ -130,11 +156,15 @@ Tetris.animate = function () {
         Tetris.cumulatedFrameTime -= Tetris.gameStepTime;
         Tetris.Block.move(0, 0, -1);
     }
-
-    //Tetris.renderer.render(Tetris.scene, Tetris.camera);
+	
+	Tetris.stats.update();
+	 
+//	Tetris.Block.mesh.layers.set(1);
+//    Tetris.renderer.render(Tetris.scene, Tetris.camera);
 	// BKL Render the VR scene.
+//	Tetris.camera.updateProjectionMatrix();
 	Tetris.effect.render(Tetris.scene, Tetris.camera);
-    Tetris.stats.update();
+   
 
 	// BKL    if (!Tetris.gameOver) window.requestAnimationFrame(Tetris.animate);
 	if (!Tetris.gameOver) Tetris.vrDisplay.requestAnimationFrame(Tetris.animate);
@@ -160,6 +190,24 @@ function enterFullscreen (el) {
     el.msRequestFullscreen();
   }
 }
+
+function onResize() {
+  console.log('Resizing to %s x %s.', window.innerWidth, window.innerHeight);
+  Tetris.effect.setSize(window.innerWidth, window.innerHeight);
+  Tetris.camera.aspect = window.innerWidth / window.innerHeight;
+  Tetris.camera.updateProjectionMatrix();
+}
+
+function onVRDisplayPresentChange() {
+  console.log('onVRDisplayPresentChange');
+  onResize();
+}
+
+// Resize the WebGL canvas when we resize and also when we change modes.
+window.addEventListener('resize', onResize);
+window.addEventListener('vrdisplaypresentchange', onVRDisplayPresentChange);
+
+
 
 // nice test:
 // var i = 0, j = 0, k = 0, interval = setInterval(function() {if(i==6) {i=0;j++;} if(j==6) {j=0;k++;} if(k==6) {clearInterval(interval); return;} Tetris.addStaticBlock(i,j,k); i++;},30)
