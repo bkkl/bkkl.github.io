@@ -133,6 +133,9 @@ Tetris.start = function () {
 		// Kick off the render loop.
 		Tetris.vrDisplay.requestAnimationFrame(Tetris.animate);
 	  }
+	  
+	
+	  
 	});
 	
 //    Tetris.animate();
@@ -287,13 +290,16 @@ window.addEventListener('keydown', function (event) {
             break;
 		// BKL adding keyboard commands 	
 		case 80: // (p)
-            Tetris.start();
+			setTimeout(Tetris.start(), 5000);
+//            Tetris.start();
             break;	
-		case 70: // (p)
-            enterFullscreen(Tetris.renderer.domElement);
-            break;	
-		case 86: // (p)
+		case 70: // (f)
             Tetris.vrDisplay.requestPresent([{source: Tetris.renderer.domElement}]);
+			enterFullscreen(Tetris.renderer.domElement);
+            break;	
+		case 86: // (v)
+            Tetris.vrDisplay.requestPresent([{source: Tetris.renderer.domElement}]);
+			enterFullscreen(Tetris.renderer.domElement);
             break;		
 			 
     }
