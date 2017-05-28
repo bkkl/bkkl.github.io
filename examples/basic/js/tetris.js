@@ -14,6 +14,8 @@ window.Tetris = window.Tetris || {};
 Tetris.sounds = {};
 //BKL used to control left eye / right eye layers. (0 = both, 1=left, 2=right)
 var VR_layers = 0;
+// BKL used to create easy level 
+var level = 0;
 
 Tetris.init = function () {
     Tetris.sounds["theme"] = document.getElementById("audio_theme");  
@@ -329,7 +331,13 @@ window.addEventListener('keydown', function (event) {
             break;			
 		case 50: //2
 			VR_layers = 2;
-            break;				
+            break;		
+		case 51: //3
+			level = 1;
+            break;	
+		case 52: //4
+			level = 0;
+            break;		
 			 
     }
 }, false);	

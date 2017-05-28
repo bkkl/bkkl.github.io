@@ -15,35 +15,48 @@ Tetris.Utils.roundVector = function(v) {
 Tetris.Block = {};
 
 Tetris.Block.shapes = [
-    [
+    // BKL square
+	[
+        {x:0, y:0, z:0},
+        {x:0, y:1, z:0},
+        {x:1, y:0, z:0},
+        {x:1, y:1, z:0}
+    ],
+	
+	// BKL "L"
+	[
         {x:0, y:0, z:0},
         {x:1, y:0, z:0},
         {x:1, y:1, z:0},
         {x:1, y:2, z:0}
-    ],
+    ]	
+	,
+
+	// BKL I
     [
         {x:0, y:0, z:0},
         {x:0, y:1, z:0},
         {x:0, y:2, z:0},
-    ],
-    [
-        {x:0, y:0, z:0},
-        {x:0, y:1, z:0},
-        {x:1, y:0, z:0},
-        {x:1, y:1, z:0}
-    ],
+    ]
+	,
+
+	// BKL T
     [
         {x:0, y:0, z:0},
         {x:0, y:1, z:0},
         {x:0, y:2, z:0},
         {x:1, y:1, z:0}
-    ],
+    ]
+	, 
+	//BKL zigzag
+	/*
     [
         {x:0, y:0, z:0},
         {x:0, y:1, z:0},
         {x:1, y:1, z:0},
         {x:1, y:2, z:0}
     ]
+	*/
 ];
 
 Tetris.Block.position = {};
@@ -52,7 +65,13 @@ Tetris.Block.generate = function () {
     var geometry, tmpGeometry, i;
 // BKL 
 	var material2 = new THREE.MeshBasicMaterial();
-    var type = Math.floor(Math.random() * (Tetris.Block.shapes.length));
+    
+	if (level === 0 ) {
+	var type = Math.floor(Math.random() * (Tetris.Block.shapes.length));
+	}
+	else {
+	var type = Math.floor(Math.random() * (0));
+	}
     this.blockType = type;
 
     Tetris.Block.shape = [];
