@@ -88,7 +88,7 @@ Tetris.init = function () {
 	light2.intensity = 1;
 	Tetris.scene.add( light2 );
 	var light3 = new THREE.DirectionalLight( 0xffffff );
-	light3.position.set( -1, -6, 5 ).normalize();
+	light3.position.set( -1, -6, 10 ).normalize();
 	Tetris.scene.add(light3);
 	
 //    Tetris.renderer.render(Tetris.scene, Tetris.camera);
@@ -244,8 +244,8 @@ Tetris.addStaticBlock = function (x, y, z) {
     if (Tetris.staticBlocks[x][y] === undefined) Tetris.staticBlocks[x][y] = [];
 
     var mesh = THREE.SceneUtils.createMultiMaterialObject(new THREE.CubeGeometry(Tetris.blockSize, Tetris.blockSize, Tetris.blockSize), [
-        new THREE.MeshBasicMaterial({color:0x000000, shading:THREE.FlatShading, wireframe:true, transparent:true}),
-        new THREE.MeshBasicMaterial({color:Tetris.zColors[z]})
+        new THREE.MeshPhongMaterial({color:Tetris.zColors[z], shading:THREE.FlatShading, wireframe:true, transparent:false}),
+        new THREE.MeshPhongMaterial({color:Tetris.zColors[z]})
     ]);
 
     mesh.position.x = (x - Tetris.boundingBoxConfig.splitX / 2) * Tetris.blockSize + Tetris.blockSize / 2;

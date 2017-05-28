@@ -91,7 +91,7 @@ Tetris.Block.generate = function () {
     Tetris.Block.mesh.rotation = {x:0, y:0, z:0};
     Tetris.Block.mesh.overdraw = true;
 	Tetris.Block.mesh.layers.set(VR_layers);
-//	Tetris.Block.mesh.children["0"].layers.set(1);
+	Tetris.Block.mesh.children["0"].layers.set(VR_layers);
 	Tetris.Block.mesh.children["1"].layers.set(VR_layers);
     Tetris.scene.add(Tetris.Block.mesh);
 };
