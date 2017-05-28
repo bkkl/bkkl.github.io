@@ -12,6 +12,8 @@ if (!window.requestAnimationFrame) {
 
 window.Tetris = window.Tetris || {};
 Tetris.sounds = {};
+//BKL used to control left eye / right eye layers. (0 = both, 1=left, 2=right)
+var VR_layers = 0;
 
 Tetris.init = function () {
     Tetris.sounds["theme"] = document.getElementById("audio_theme");  
@@ -22,13 +24,14 @@ Tetris.init = function () {
 
     Tetris.sounds["theme"].play();
     // set the scene size
+
     var WIDTH = window.innerWidth,
         HEIGHT = window.innerHeight;
 
     // set some camera attributes
     var VIEW_ANGLE = 50,
         ASPECT = WIDTH / HEIGHT,
-        NEAR = 0.1,
+        NEAR = 20.1,
         FAR = 2000;
 
     // create a WebGL renderer, camera
@@ -38,11 +41,11 @@ Tetris.init = function () {
         ASPECT,
         NEAR,
         FAR);
-	Tetris.camera.zoom = 2;	
+//	Tetris.camera.zoom = 1;	
     Tetris.scene = new THREE.Scene();
 
     // the camera starts at 0,0,0 so pull it back
-    Tetris.camera.position.z = 500;
+    Tetris.camera.position.z = 150;
 	Tetris.camera.position.y = -100;
     Tetris.scene.add(Tetris.camera);
 
@@ -68,8 +71,15 @@ Tetris.init = function () {
 
     var boundingBox = new THREE.Mesh(
         new THREE.CubeGeometry(boundingBoxConfig.width, boundingBoxConfig.height, boundingBoxConfig.depth, boundingBoxConfig.splitX, boundingBoxConfig.splitY, boundingBoxConfig.splitZ),
-        new THREE.MeshBasicMaterial({ color:0xffaa00, wireframe:true })
+        new THREE.MeshBasicMaterial({color:0xffaa00, wireframe:true, side: THREE.DoubleSide, transparent:true})
     );
+	// BKL controling color of the bounding box
+	boundingBox.setColor = function(color){
+		boundingBox.material.color = new THREE.Color(color);
+		}
+//	boundingBox.setColor(0xFFFFFF)  //change color using hex value or
+//	boundingBox.setColor("blue")    //set material color by using color name
+	
     Tetris.scene.add(boundingBox);
 
     Tetris.renderer.render(Tetris.scene, Tetris.camera);
@@ -78,7 +88,8 @@ Tetris.init = function () {
     Tetris.stats.domElement.style.position = 'absolute';
     Tetris.stats.domElement.style.top = '10px';
     Tetris.stats.domElement.style.left = '10px';
-    document.body.appendChild(Tetris.stats.domElement);
+// BKL Use to disable stat window 	
+//    document.body.appendChild(Tetris.stats.domElement);
 
     document.getElementById("play_button").addEventListener('click', function (event) {
         event.preventDefault();
@@ -138,10 +149,9 @@ Tetris.start = function () {
 	  
 	});
 	
-//    Tetris.animate();
 };
 
-Tetris.gameStepTime = 500;
+Tetris.gameStepTime = 750;
 
 Tetris.frameTime = 0; // ms
 Tetris.cumulatedFrameTime = 0; // ms
@@ -157,7 +167,7 @@ Tetris.animate = function () {
 
     while (Tetris.cumulatedFrameTime > Tetris.gameStepTime) {
         Tetris.cumulatedFrameTime -= Tetris.gameStepTime;
-        Tetris.Block.move(0, 0, -1);
+        Tetris.Block.move(0, 0, -0.5);
     }
 	
 	Tetris.stats.update();
@@ -265,7 +275,7 @@ window.addEventListener('keydown', function (event) {
             Tetris.Block.move(1, 0, 0);
             break;
         case 32: // space
-            Tetris.Block.move(0, 0, -1);
+            Tetris.Block.moveto(0, 0, -0.5);
             break;
 
         case 87: // up (w)
@@ -301,6 +311,15 @@ window.addEventListener('keydown', function (event) {
             Tetris.vrDisplay.requestPresent([{source: Tetris.renderer.domElement}]);
 			enterFullscreen(Tetris.renderer.domElement);
             break;		
+		case 48: // (0)
+			VR_layers = 0;
+            break;	
+		case 49:// (1)
+			VR_layers = 1;
+            break;			
+		case 50: //2
+			VR_layers = 2;
+            break;				
 			 
     }
 }, false);	

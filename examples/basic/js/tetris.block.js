@@ -66,13 +66,11 @@ Tetris.Block.generate = function () {
         tmpGeometry = new THREE.Mesh(new THREE.BoxGeometry(Tetris.blockSize, Tetris.blockSize, Tetris.blockSize), material2);
         tmpGeometry.position.x = Tetris.blockSize * Tetris.Block.shape[i].x;
         tmpGeometry.position.y = Tetris.blockSize * Tetris.Block.shape[i].y;
-		tmpGeometry.layers.set(1);
         THREE.GeometryUtils.merge(geometry, tmpGeometry);
 
     }
-//	geometry.layers.set(1);
     Tetris.Block.mesh = THREE.SceneUtils.createMultiMaterialObject(geometry, [
-        new THREE.MeshBasicMaterial({color:0x000000, shading:THREE.FlatShading, wireframe:true, transparent:true}),
+        new THREE.MeshBasicMaterial({color:0x2194ce, shading:THREE.FlatShading, wireframe:true, transparent:true}),
         new THREE.MeshBasicMaterial({color:0xff0000})
     ]);
 	
@@ -92,9 +90,9 @@ Tetris.Block.generate = function () {
     Tetris.Block.mesh.position.z = (Tetris.Block.position.z - Tetris.boundingBoxConfig.splitZ / 2) * Tetris.blockSize + Tetris.blockSize / 2;
     Tetris.Block.mesh.rotation = {x:0, y:0, z:0};
     Tetris.Block.mesh.overdraw = true;
-	Tetris.Block.mesh.layers.set(1);
-	Tetris.Block.mesh.children["0"].layers.set(1);
-	Tetris.Block.mesh.children["1"].layers.set(1);
+	Tetris.Block.mesh.layers.set(VR_layers);
+//	Tetris.Block.mesh.children["0"].layers.set(1);
+	Tetris.Block.mesh.children["1"].layers.set(VR_layers);
     Tetris.scene.add(Tetris.Block.mesh);
 };
 
@@ -123,28 +121,15 @@ Tetris.Block.rotate = function (x, y, z) {
 };
 
 Tetris.Block.move = function (x, y, z) {
-	var possx = Tetris.Block.position.x, possy = Tetris.Block.position.y, possz = Tetris.Block.position.z, shapes = Tetris.Block.shape;
-    var fieldss = Tetris.Board.fields;
-	possx = possx+x; 
-	possy = possy+y;
-
-	for (i = 0; i < Tetris.Block.shape.length; i++) {
-        if ((shapes[i].x + possx) < 0 || (shapes[i].y + possy) < 0 || (shapes[i].x + possx) >= fieldss.length || (shapes[i].y + possy) >= fieldss[0].length) {
-           x = 0;
-		   y = 0;
-        }
-	}	
-    Tetris.Block.mesh.position.z += z * Tetris.blockSize;
-    Tetris.Block.position.z += z;
-// BKL debug option to see position in scoring window	
-	Tetris.pointsDOM.innerHTML =  Tetris.Block.position.z;
-	
-	Tetris.Block.mesh.position.x += x * Tetris.blockSize;
+    Tetris.Block.mesh.position.x += x * Tetris.blockSize;
     Tetris.Block.position.x += x;
 
     Tetris.Block.mesh.position.y += y * Tetris.blockSize;
     Tetris.Block.position.y += y;
-	
+
+    Tetris.Block.mesh.position.z += z * Tetris.blockSize;
+    Tetris.Block.position.z += z;
+
     var collision = Tetris.Board.testCollision((z != 0));
 
     if (collision === Tetris.Board.COLLISION.WALL) {
@@ -157,6 +142,34 @@ Tetris.Block.move = function (x, y, z) {
     } else {
 		Tetris.sounds["move"].play();
 	}
+};
+
+Tetris.Block.moveto = function (x, y, z) {
+    Tetris.Block.mesh.position.x += x * Tetris.blockSize;
+    Tetris.Block.position.x += x;
+
+    Tetris.Block.mesh.position.y += y * Tetris.blockSize;
+    Tetris.Block.position.y += y;
+
+	var collision = Tetris.Board.testCollision((z != 0));
+	
+	while (collision !== Tetris.Board.COLLISION.GROUND) {
+	    Tetris.Block.mesh.position.z += z * Tetris.blockSize;
+		Tetris.Block.position.z += z;
+
+		if (collision === Tetris.Board.COLLISION.WALL) {
+			Tetris.Block.move(-x, -y, 0); // laziness FTW
+			break;
+		}
+		collision = Tetris.Board.testCollision((z != 0));
+	}
+			if (collision === Tetris.Board.COLLISION.GROUND) {
+				Tetris.Block.hitBottom();
+				Tetris.sounds["collision"].play();
+				Tetris.Board.checkCompleted();		
+			} else {
+				Tetris.sounds["move"].play();
+			}
 };
 
 /**
