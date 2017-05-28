@@ -81,8 +81,18 @@ Tetris.init = function () {
 //	boundingBox.setColor("blue")    //set material color by using color name
 	
     Tetris.scene.add(boundingBox);
+//  Adding Light
+	var light = new THREE.AmbientLight( 0x404040 );
+	Tetris.scene.add( light );
+	var light2 = new THREE.PointLight( 0xffffff, 1, 100 );
+	light2.intensity = 1;
+	Tetris.scene.add( light2 );
+	var light3 = new THREE.DirectionalLight( 0xffffff );
+	light3.position.set( -1, -6, 5 ).normalize();
+	Tetris.scene.add(light3);
+	
+//    Tetris.renderer.render(Tetris.scene, Tetris.camera);
 
-    Tetris.renderer.render(Tetris.scene, Tetris.camera);
 
     Tetris.stats = new Stats();
     Tetris.stats.domElement.style.position = 'absolute';
@@ -106,21 +116,21 @@ Tetris.start = function () {
 	
     Tetris.Block.generate();
 	//BKL test block
-	var geometry2 = new THREE.BoxGeometry(10,10,10);
-	var material2 = new THREE.MeshNormalMaterial();
+	var geometry2 = new THREE.BoxGeometry(30,30,30);
+	var material2 = new THREE.MeshLambertMaterial();
 	var cube2 = new THREE.Mesh(geometry2, material2);
 	var cube3 = new THREE.Mesh(geometry2, material2);
 	var fit = new THREE.Object3D(); 
 	// Position cube mesh
 /*
-	cube2.position.z = 5;
+	cube2.position.z = 4;
 	cube2.position.x = 0;
-	cube2.position.y = 0;
-	cube2.layers.set(1);
+	cube2.position.y = -15;
+	cube2.layers.set(0);
 	
-	cube3.position.z = 5;
+	cube3.position.z = 4;
 	cube3.position.x = 0;
-	cube3.position.y = -10;
+	cube3.position.y = -25;
 	cube3.layers.set(0);
 	
 	fit.add(cube2);

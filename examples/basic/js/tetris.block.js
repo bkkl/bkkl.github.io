@@ -70,8 +70,8 @@ Tetris.Block.generate = function () {
 
     }
     Tetris.Block.mesh = THREE.SceneUtils.createMultiMaterialObject(geometry, [
-        new THREE.MeshBasicMaterial({color:0x2194ce, shading:THREE.FlatShading, wireframe:true, transparent:true}),
-        new THREE.MeshBasicMaterial({color:0xff0000})
+        new THREE.MeshPhongMaterial({color:0x2194ce, shading:THREE.FlatShading, wireframe:true, transparent:false}),
+        new THREE.MeshPhongMaterial({color:0xff0000})
     ]);
 	
 	
@@ -144,6 +144,7 @@ Tetris.Block.move = function (x, y, z) {
 	}
 };
 
+// BKL added this function for better game play
 Tetris.Block.moveto = function (x, y, z) {
     Tetris.Block.mesh.position.x += x * Tetris.blockSize;
     Tetris.Block.position.x += x;
