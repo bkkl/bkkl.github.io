@@ -39,6 +39,7 @@ Tetris.init = function () {
     // create a WebGL renderer, camera
     // and a scene
     Tetris.renderer = new THREE.WebGLRenderer({antialias: true});
+	Tetris.renderer.setPixelRatio(Math.floor(window.devicePixelRatio));
     Tetris.camera = new THREE.PerspectiveCamera(VIEW_ANGLE,
         ASPECT,
         NEAR,
@@ -47,8 +48,8 @@ Tetris.init = function () {
     Tetris.scene = new THREE.Scene();
 
     // the camera starts at 0,0,0 so pull it back
-    Tetris.camera.position.z = 250;
-	Tetris.camera.position.y = -100;
+    Tetris.camera.position.z = 400;
+	Tetris.camera.position.y = -125;
     Tetris.scene.add(Tetris.camera);
 
     // start the renderer
@@ -56,7 +57,7 @@ Tetris.init = function () {
 
     // attach the render-supplied DOM element
     document.body.appendChild(Tetris.renderer.domElement);
-
+		
     // configuration object
     var boundingBoxConfig = {
         width:360,
@@ -70,18 +71,25 @@ Tetris.init = function () {
     Tetris.blockSize = boundingBoxConfig.width / boundingBoxConfig.splitX;
 
     Tetris.Board.init(boundingBoxConfig.splitX, boundingBoxConfig.splitY, boundingBoxConfig.splitZ);
-
+	//BKL adding texture to bounding box
+    var material = new THREE.MeshLambertMaterial({ map: THREE.TextureLoader('img/box.png'), side: THREE.BackSide, opacity: 0.75, transparent: true, wireframe: true });
+ //     var material = new THREE.MeshBasicMaterial({color:0xffaa00, wireframe:true, side: THREE.DoubleSide, transparent:true});
+  /*
     var boundingBox = new THREE.Mesh(
         new THREE.CubeGeometry(boundingBoxConfig.width, boundingBoxConfig.height, boundingBoxConfig.depth, boundingBoxConfig.splitX, boundingBoxConfig.splitY, boundingBoxConfig.splitZ),
         new THREE.MeshBasicMaterial({color:0xffaa00, wireframe:true, side: THREE.DoubleSide, transparent:true})
     );
+ */
+    var boundingBox = new THREE.Mesh(
+        new THREE.CubeGeometry(boundingBoxConfig.width, boundingBoxConfig.height, boundingBoxConfig.depth, boundingBoxConfig.splitX, boundingBoxConfig.splitY, boundingBoxConfig.splitZ),
+        material);
 	// BKL controling color of the bounding box
-	boundingBox.setColor = function(color){
-		boundingBox.material.color = new THREE.Color(color);
-		}
+//	boundingBox.setColor = function(color){
+//		boundingBox.material.color = new THREE.Color(color);
+//		}
 //	boundingBox.setColor(0xFFFFFF)  //change color using hex value or
 //	boundingBox.setColor("blue")    //set material color by using color name
-	
+
     Tetris.scene.add(boundingBox);
 //  Adding Light
 	var light = new THREE.AmbientLight( 0x404040 );

@@ -95,7 +95,7 @@ Tetris.Block.generate = function () {
 	
 	
     // initial position
-    Tetris.Block.position = {x:Math.floor(Tetris.boundingBoxConfig.splitX / 2) - 1, y:Math.floor(Tetris.boundingBoxConfig.splitY / 2) - 1, z:7};
+    Tetris.Block.position = {x:Math.floor(Tetris.boundingBoxConfig.splitX / 2) - 1, y:(Math.floor(Tetris.boundingBoxConfig.splitY / 2) - 1), z:15};
 
     if (Tetris.Board.testCollision(true) === Tetris.Board.COLLISION.GROUND) {
         Tetris.gameOver = true;
@@ -113,6 +113,8 @@ Tetris.Block.generate = function () {
 	Tetris.Block.mesh.children["0"].layers.set(VR_layers);
 	Tetris.Block.mesh.children["1"].layers.set(VR_layers);
     Tetris.scene.add(Tetris.Block.mesh);
+	Tetris.Block.move(0, -1, 0);
+	Tetris.Block.move(0, -1, 0);
 };
 
 
