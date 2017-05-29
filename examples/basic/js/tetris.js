@@ -47,7 +47,7 @@ Tetris.init = function () {
     Tetris.scene = new THREE.Scene();
 
     // the camera starts at 0,0,0 so pull it back
-    Tetris.camera.position.z = 150;
+    Tetris.camera.position.z = 250;
 	Tetris.camera.position.y = -100;
     Tetris.scene.add(Tetris.camera);
 
