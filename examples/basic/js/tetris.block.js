@@ -95,7 +95,7 @@ Tetris.Block.generate = function () {
 	
 	
     // initial position
-    Tetris.Block.position = {x:Math.floor(Tetris.boundingBoxConfig.splitX / 2) - 1, y:Math.floor(Tetris.boundingBoxConfig.splitY / 2) - 50, z:7};
+    Tetris.Block.position = {x:Math.floor(Tetris.boundingBoxConfig.splitX / 2) - 1, y:Math.floor(Tetris.boundingBoxConfig.splitY / 2) - 1, z:7};
 
     if (Tetris.Board.testCollision(true) === Tetris.Board.COLLISION.GROUND) {
         Tetris.gameOver = true;
@@ -105,7 +105,7 @@ Tetris.Block.generate = function () {
     }
 
     Tetris.Block.mesh.position.x = (Tetris.Block.position.x - Tetris.boundingBoxConfig.splitX / 2) * Tetris.blockSize / 2;
-    Tetris.Block.mesh.position.y = (Tetris.Block.position.y - Tetris.boundingBoxConfig.splitY / 2) * Tetris.blockSize / 2;
+    Tetris.Block.mesh.position.y = ((Tetris.Block.position.y - Tetris.boundingBoxConfig.splitY / 2) * Tetris.blockSize / 2)-6;
     Tetris.Block.mesh.position.z = (Tetris.Block.position.z - Tetris.boundingBoxConfig.splitZ / 2) * Tetris.blockSize + Tetris.blockSize / 2;
     Tetris.Block.mesh.rotation = {x:0, y:0, z:0};
     Tetris.Block.mesh.overdraw = true;
