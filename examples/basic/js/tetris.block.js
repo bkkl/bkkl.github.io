@@ -105,7 +105,7 @@ Tetris.Block.generate = function () {
     }
 
     Tetris.Block.mesh.position.x = (Tetris.Block.position.x - Tetris.boundingBoxConfig.splitX / 2) * Tetris.blockSize / 2;
-    Tetris.Block.mesh.position.y = ((Tetris.Block.position.y - Tetris.boundingBoxConfig.splitY / 2) * Tetris.blockSize / 2)-6;
+    Tetris.Block.mesh.position.y = ((Tetris.Block.position.y - Tetris.boundingBoxConfig.splitY / 2) * Tetris.blockSize / 2)-50;
     Tetris.Block.mesh.position.z = (Tetris.Block.position.z - Tetris.boundingBoxConfig.splitZ / 2) * Tetris.blockSize + Tetris.blockSize / 2;
     Tetris.Block.mesh.rotation = {x:0, y:0, z:0};
     Tetris.Block.mesh.overdraw = true;
