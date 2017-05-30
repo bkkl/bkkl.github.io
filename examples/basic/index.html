@@ -130,7 +130,7 @@ function onTextureLoaded(texture) {
 // Create 3D objects.
 var geometry = new THREE.BoxGeometry(2.5, 2.5, 2.5);
 //var material = new THREE.MeshNormalMaterial();
-var material3 = new THREE.MeshPhongMaterial({ map: THREE.TextureLoader('img/crate') });
+var material3 = new THREE.MeshPhongMaterial({ map: THREE.TextureLoader('img/crate.jpg') });
 var cube = new THREE.Mesh(geometry, material3);
 
 // Position cube mesh
@@ -139,7 +139,7 @@ cube.position.z = -5;
 //BKL
 var geometry2 = new THREE.BoxGeometry(1,1,1);
 var material2 = new THREE.MeshNormalMaterial();
-var cube2 = new THREE.Mesh(geometry, material);
+var cube2 = new THREE.Mesh(geometry, material2);
 
 // Position cube mesh
 
