@@ -72,7 +72,13 @@ Tetris.init = function () {
 
     Tetris.Board.init(boundingBoxConfig.splitX, boundingBoxConfig.splitY, boundingBoxConfig.splitZ);
 	//BKL adding texture to bounding box
-    var material = new THREE.MeshLambertMaterial({ map: THREE.TextureLoader('img/box.png'), side: THREE.BackSide, opacity: 0.75, transparent: true, wireframe: true });
+    var texture1 = THREE.ImageUtils.loadTexture( 'img/bricks.jpg' );
+    var texture2 = THREE.ImageUtils.loadTexture( 'img/crate.jpg' );
+		texture2.wrapS = texture2.wrapT = THREE.RepeatWrapping;
+	    texture2.repeat.set( 6, 6 );
+	var material = new THREE.MeshLambertMaterial({ map: texture2, side: THREE.BackSide });
+	
+//	var material = new THREE.MeshPhongMaterial({ map: THREE.TextureLoader('img/crate'), side: THREE.BackSide, opacity: 0.75, transparent: true, wireframe: false });
  //     var material = new THREE.MeshBasicMaterial({color:0xffaa00, wireframe:true, side: THREE.DoubleSide, transparent:true});
   /*
     var boundingBox = new THREE.Mesh(
@@ -80,10 +86,35 @@ Tetris.init = function () {
         new THREE.MeshBasicMaterial({color:0xffaa00, wireframe:true, side: THREE.DoubleSide, transparent:true})
     );
  */
-    var boundingBox = new THREE.Mesh(
-        new THREE.CubeGeometry(boundingBoxConfig.width, boundingBoxConfig.height, boundingBoxConfig.depth, boundingBoxConfig.splitX, boundingBoxConfig.splitY, boundingBoxConfig.splitZ),
-        material);
-	// BKL controling color of the bounding box
+ 	var cubeMaterial = new THREE.MeshLambertMaterial( { color: 0xffffff, vertexColors: THREE.VertexColors, side: THREE.BackSide, opacity: 0.90, transparent: true } );
+	var color, face, numberOfSides, vertexIndex;
+	// faces are indexed using characters
+	var faceIndices = [ 'a', 'b', 'c', 'd' ];
+	// randomly color cube
+	var cubeGeometry = new THREE.CubeGeometry(boundingBoxConfig.width, boundingBoxConfig.height, boundingBoxConfig.depth, boundingBoxConfig.splitX, boundingBoxConfig.splitY, boundingBoxConfig.splitZ);
+	for ( var i = 0; i < cubeGeometry.faces.length; i++ ) 
+	{
+		face  = cubeGeometry.faces[ i ];	
+		// determine if current face is a tri or a quad
+		numberOfSides = ( face instanceof THREE.Face3 ) ? 3 : 4;
+		// assign color to each vertex of current face
+		for( var j = 0; j < numberOfSides; j++ ) 
+		{
+			vertexIndex = face[ faceIndices[ j ] ];
+			// initialize color variable
+			color = new THREE.Color( 0xffffff );
+			if((j%2)==0){
+			color.setHex( 0x264942 );}
+				//color.setHex( Math.random() * 0xff0000 );}	   
+			else{
+				color.setHex( 0x56bca6 );}
+			
+			face.vertexColors[ j ] = color;
+		}
+	}
+	
+    var boundingBox = new THREE.Mesh( cubeGeometry, material);
+// BKL controling color of the bounding box
 //	boundingBox.setColor = function(color){
 //		boundingBox.material.color = new THREE.Color(color);
 //		}
@@ -126,13 +157,22 @@ Tetris.start = function () {
 	
     Tetris.Block.generate();
 	//BKL test block
-	var geometry2 = new THREE.BoxGeometry(30,30,30);
-	var material2 = new THREE.MeshLambertMaterial();
+	var geometry2 = new THREE.BoxGeometry(60,60,60);
+
+	
+//	var material2 = new THREE.MeshLambertMaterial();
+//	var loader = new THREE.TextureLoader();
+//	var texture1 = loader.load('img/bricks.jpg');
+//	var texture2 = loader.load('img/crate.jpg');
+/*
+	var texture1 = THREE.ImageUtils.loadTexture( 'img/bricks.jpg' );
+    var texture2 = THREE.ImageUtils.loadTexture( 'img/crate.jpg' );
+	var material2 = new THREE.MeshLambertMaterial({ map: texture2});
 	var cube2 = new THREE.Mesh(geometry2, material2);
 	var cube3 = new THREE.Mesh(geometry2, material2);
 	var fit = new THREE.Object3D(); 
 	// Position cube mesh
-/*
+
 	cube2.position.z = 4;
 	cube2.position.x = 0;
 	cube2.position.y = -15;
