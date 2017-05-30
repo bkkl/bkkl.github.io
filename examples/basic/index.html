@@ -122,9 +122,15 @@ function onTextureLoaded(texture) {
 //  scene.add(skybox);
 }
 
+//
+    var light = new THREE.DirectionalLight( 0xffffff );
+    light.position.set( 0, 1, 1 ).normalize();
+    scene.add(light);
+
 // Create 3D objects.
-var geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-var material = new THREE.MeshNormalMaterial();
+var geometry = new THREE.BoxGeometry(2.5, 2.5, 2.5);
+//var material = new THREE.MeshNormalMaterial();
+var material = new THREE.MeshPhongMaterial({ map: THREE.TextureLoader('img/crate') });
 var cube = new THREE.Mesh(geometry, material);
 
 // Position cube mesh
