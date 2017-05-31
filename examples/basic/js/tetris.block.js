@@ -66,6 +66,9 @@ Tetris.Block.generate = function () {
 // BKL 
 	var material2 = new THREE.MeshBasicMaterial();
     
+	CurrentBlockOpacity = 0.05;
+    CurrentBlockWireFrame = true;
+	
 	if (level === 0 ) {
 	var type = Math.floor(Math.random() * (Tetris.Block.shapes.length));
 	}
@@ -89,8 +92,8 @@ Tetris.Block.generate = function () {
 
     }
     Tetris.Block.mesh = THREE.SceneUtils.createMultiMaterialObject(geometry, [
-        new THREE.MeshPhongMaterial({color:0x2194ce, shading:THREE.FlatShading, wireframe:true, transparent:false}),
-        new THREE.MeshPhongMaterial({color:0xff0000})
+        new THREE.MeshPhongMaterial({color:0x2194ce, shading:THREE.FlatShading, wireframe:false, transparent: true, opacity: CurrentBlockOpacity}),
+        new THREE.MeshPhongMaterial({color:0xff0000, transparent:true, opacity: CurrentBlockOpacity})
     ]);
 	
 	

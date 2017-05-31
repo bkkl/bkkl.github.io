@@ -16,6 +16,8 @@ Tetris.sounds = {};
 var VR_layers = 0;
 // BKL used to create easy level 
 var level = 0;
+var CurrentBlockOpacity = 0;
+var CurrentBlockWireFrame = false;
 
 Tetris.init = function () {
     Tetris.sounds["theme"] = document.getElementById("audio_theme");  
@@ -224,6 +226,17 @@ Tetris.animate = function () {
     Tetris.frameTime = time - Tetris._lastFrameTime;
     Tetris._lastFrameTime = time;
     Tetris.cumulatedFrameTime += Tetris.frameTime;
+// adding progressive effect for new blocks 	
+	if (CurrentBlockOpacity <1){
+		 CurrentBlockOpacity = CurrentBlockOpacity+0.0005;
+			if (CurrentBlockOpacity > 0.3){
+			    CurrentBlockOpacity = 1;
+				CurrentBlockWireFrame = true;
+				Tetris.Block.mesh.children["0"].material.wireframe = true;
+			}	
+		Tetris.Block.mesh.children["0"].material.opacity = CurrentBlockOpacity;
+		Tetris.Block.mesh.children["1"].material.opacity = CurrentBlockOpacity;
+	}
 
     while (Tetris.cumulatedFrameTime > Tetris.gameStepTime) {
         Tetris.cumulatedFrameTime -= Tetris.gameStepTime;
