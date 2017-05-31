@@ -228,7 +228,7 @@ Tetris.animate = function () {
     Tetris.cumulatedFrameTime += Tetris.frameTime;
 // adding progressive effect for new blocks 	
 	if (CurrentBlockOpacity <1){
-		 CurrentBlockOpacity = CurrentBlockOpacity+0.0005;
+		 CurrentBlockOpacity = CurrentBlockOpacity+0.001;
 			if (CurrentBlockOpacity > 0.3){
 			    CurrentBlockOpacity = 1;
 				CurrentBlockWireFrame = true;
