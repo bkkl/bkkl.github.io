@@ -213,6 +213,7 @@ Tetris.start = function () {
 	
 };
 
+
 Tetris.gameStepTime = 750;
 
 Tetris.frameTime = 0; // ms
@@ -228,7 +229,7 @@ Tetris.animate = function () {
     Tetris.cumulatedFrameTime += Tetris.frameTime;
 // adding progressive effect for new blocks 	
 	if (CurrentBlockOpacity <1){
-		 CurrentBlockOpacity = CurrentBlockOpacity+0.001;
+		 CurrentBlockOpacity = CurrentBlockOpacity+0.005;
 			if (CurrentBlockOpacity > 0.3){
 			    CurrentBlockOpacity = 1;
 				CurrentBlockWireFrame = true;
@@ -237,6 +238,19 @@ Tetris.animate = function () {
 		Tetris.Block.mesh.children["0"].material.opacity = CurrentBlockOpacity;
 		Tetris.Block.mesh.children["1"].material.opacity = CurrentBlockOpacity;
 	}
+// BKL speed up the game the higher the score. 
+	
+	if (Tetris.currentPoints > 9999){
+		Tetris.gameStepTime = 100;	
+	} else if (Tetris.currentPoints > 3999){
+		Tetris.gameStepTime = 200;	
+	} else if (Tetris.currentPoints > 2999){
+		Tetris.gameStepTime = 300;	
+	} else if (Tetris.currentPoints > 1999){
+		Tetris.gameStepTime = 400;
+	} else if (Tetris.currentPoints > 999){
+		Tetris.gameStepTime = 500;
+	}			
 
     while (Tetris.cumulatedFrameTime > Tetris.gameStepTime) {
         Tetris.cumulatedFrameTime -= Tetris.gameStepTime;
@@ -251,7 +265,6 @@ Tetris.animate = function () {
 //	Tetris.camera.updateProjectionMatrix();
 	Tetris.effect.render(Tetris.scene, Tetris.camera);
    
-
 	// BKL    if (!Tetris.gameOver) window.requestAnimationFrame(Tetris.animate);
 	if (!Tetris.gameOver) Tetris.vrDisplay.requestAnimationFrame(Tetris.animate);
 };
@@ -322,7 +335,8 @@ Tetris.addStaticBlock = function (x, y, z) {
 Tetris.currentPoints = 0;
 Tetris.addPoints = function (n) {
     Tetris.currentPoints += n;
-    Tetris.pointsDOM.innerHTML = Tetris.currentPoints;
+    
+	Tetris.pointsDOM.innerHTML = Tetris.currentPoints; 
     Cufon.replace('#points');
     Tetris.sounds["score"].play();
 };
@@ -373,11 +387,10 @@ window.addEventListener('keydown', function (event) {
             break;
 		// BKL adding keyboard commands 	
 		case 80: // (p)
-			setTimeout(Tetris.start(), 5000);
-//            Tetris.start();
+            Tetris.start();
             break;	
 		case 70: // (f)
-            Tetris.vrDisplay.requestPresent([{source: Tetris.renderer.domElement}]);
+			Tetris.vrDisplay.requestPresent([{source: Tetris.renderer.domElement}]);
 			enterFullscreen(Tetris.renderer.domElement);
             break;	
 		case 86: // (v)
