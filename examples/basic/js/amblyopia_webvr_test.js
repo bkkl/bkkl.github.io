@@ -34,10 +34,10 @@ var CurrentBlockWireFrame = true;
 			curveSegments: 12,
 			bevelThickness: 1,
 			bevelSize: 1,
-			bevelEnabled: true
+			bevelEnabled: false
 		});
 		textGeo.computeBoundingBox();
-		var textMaterial = new THREE.MeshPhongMaterial( { color: 0x000000, specular: 0x000000 } );
+		var textMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0xffffff } );
 		Tetris.text1 = new THREE.Mesh( textGeo, textMaterial );
 		Tetris.text2 = new THREE.Mesh( textGeo, textMaterial );
 		// find middle of font
