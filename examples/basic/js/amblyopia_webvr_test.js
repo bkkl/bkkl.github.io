@@ -37,7 +37,7 @@ var CurrentBlockWireFrame = true;
 			bevelEnabled: true
 		});
 		textGeo.computeBoundingBox();
-		var textMaterial = new THREE.MeshPhongMaterial( { color: 0xff0000, specular: 0xffffff } );
+		var textMaterial = new THREE.MeshPhongMaterial( { color: 0x000000, specular: 0xffffff } );
 		Tetris.text1 = new THREE.Mesh( textGeo, textMaterial );
 		Tetris.text2 = new THREE.Mesh( textGeo, textMaterial );
 		// find middle of font
@@ -53,7 +53,8 @@ var CurrentBlockWireFrame = true;
 		Tetris.text1.castShadow = false;
 		Tetris.text1.receiveShadow = false;
 		Tetris.text2 = Tetris.text1;
-		Tetris.text1.layers.set(0);	
+		Tetris.text1.layers.set(1);	
+		Tetris.text2.layers.set(0);	
 
 	});
 
@@ -116,7 +117,7 @@ Tetris.init = function () {
     var texture2 = THREE.ImageUtils.loadTexture( 'img/stars.jpg' );
 //		texture2.wrapS = texture2.wrapT = THREE.RepeatWrapping;
 //	    texture2.repeat.set( 6, 6 );
-	var material = new THREE.MeshLambertMaterial({ map: texture2, side: THREE.BackSide, opacity: 0.4, transparent: true });
+	var material = new THREE.MeshLambertMaterial({ map: texture2, side: THREE.BackSide, opacity: 0.8, transparent: true });
 	
 //	var material = new THREE.MeshPhongMaterial({ map: THREE.TextureLoader('img/crate'), side: THREE.BackSide, opacity: 0.75, transparent: true, wireframe: false });
  //     var material = new THREE.MeshBasicMaterial({color:0xffaa00, wireframe:true, side: THREE.DoubleSide, transparent:true});
@@ -207,9 +208,9 @@ Tetris.start = function () {
     var texture2 = THREE.ImageUtils.loadTexture( 'img/crate.jpg' );
 	var material1 = new THREE.MeshLambertMaterial({ map: texture1});
 	var material2 = new THREE.MeshLambertMaterial({ map: texture2});
-	var material3 = new THREE.MeshLambertMaterial({ color: 0x00ff00, wireframe: false});
+	var material3 = new THREE.MeshLambertMaterial({ color: 0x0000ff, wireframe: false});
 	var material4 = new THREE.MeshPhongMaterial({ color: 0xff0000, wireframe: false});
-	var outlineMaterial1 = new THREE.MeshBasicMaterial( { color: 0xff0000, side: THREE.BackSide } );
+	var outlineMaterial1 = new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.BackSide } );
 	
 	Tetris.cube1 = new THREE.Mesh(geometry2, material3);
 	Tetris.cubeoutline1 = new THREE.Mesh(geometry2, outlineMaterial1);
@@ -238,7 +239,8 @@ Tetris.start = function () {
 	Tetris.scene.add(Tetris.cube2);
 //	Tetris.scene.add(Tetris.cubeoutline2); 
     //// add text to cube of TextGeometry
-//	Tetris.scene.add(Tetris.text1);
+	Tetris.scene.add(Tetris.text1);
+	Tetris.scene.add(Tetris.text2);
 
 // End TextGeometry
 	//BKL 
