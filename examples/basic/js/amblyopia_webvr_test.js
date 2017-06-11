@@ -37,7 +37,7 @@ var CurrentBlockWireFrame = true;
 			bevelEnabled: true
 		});
 		textGeo.computeBoundingBox();
-		var textMaterial = new THREE.MeshPhongMaterial( { color: 0x000000, specular: 0xffffff } );
+		var textMaterial = new THREE.MeshPhongMaterial( { color: 0x000000, specular: 0x000000 } );
 		Tetris.text1 = new THREE.Mesh( textGeo, textMaterial );
 		Tetris.text2 = new THREE.Mesh( textGeo, textMaterial );
 		// find middle of font
@@ -49,11 +49,11 @@ var CurrentBlockWireFrame = true;
 		
 		Tetris.text1.position.x = -middle.x;
 		Tetris.text1.position.y = -middle.y;
-		Tetris.text1.position.z = 300;
+		Tetris.text1.position.z = 550;
 		Tetris.text1.castShadow = false;
 		Tetris.text1.receiveShadow = false;
 		Tetris.text2 = Tetris.text1;
-		Tetris.text1.layers.set(1);	
+		Tetris.text1.layers.set(0);	
 		Tetris.text2.layers.set(0);	
 
 	});
@@ -219,7 +219,7 @@ Tetris.start = function () {
 //	var fit = new THREE.Object3D(); 
 	// Position cube mesh
 
-	Tetris.cube1.position.z = 0;
+	Tetris.cube1.position.z = 200;
 	Tetris.cube1.position.x = 0;
 	Tetris.cube1.position.y = 0;
 	Tetris.cube1.layers.set(1);
@@ -227,7 +227,7 @@ Tetris.start = function () {
 	Tetris.cubeoutline1.position = Tetris.cube1.position;
 	Tetris.cubeoutline1.scale.multiplyScalar(1.02);
 	
-	Tetris.cube2.position.z = 0;
+	Tetris.cube2.position.z = 200;
 	Tetris.cube2.position.x = 0;
 	Tetris.cube2.position.y = 0;
 	Tetris.cube2.layers.set(2);
@@ -240,7 +240,7 @@ Tetris.start = function () {
 //	Tetris.scene.add(Tetris.cubeoutline2); 
     //// add text to cube of TextGeometry
 	Tetris.scene.add(Tetris.text1);
-	Tetris.scene.add(Tetris.text2);
+//	Tetris.scene.add(Tetris.text2);
 
 // End TextGeometry
 	//BKL 
@@ -313,7 +313,11 @@ Tetris.animate = function () {
 //	Tetris.text1.position.z = Tetris.text1.position.z +1;
 //	Tetris.cube1.rotation.y += Tetris.frameTime * .0006;
 //	Tetris.cube1.rotation.x += Tetris.frameTime * .0006;
-//	Tetris.cube1.position.z = Tetris.cube1.position.z +1;
+
+/* 		Tetris.cube1.position.z = Tetris.cube1.position.z +1;
+		Tetris.cube2.position.z = Tetris.cube2.position.z +1;
+		Tetris.text1.position.z = Tetris.text1.position.z +1; */
+		
     }
 	
 //	Tetris.stats.update();
