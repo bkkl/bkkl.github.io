@@ -18,18 +18,1316 @@ var VR_layers = 0;
 var level = 0;
 var CurrentBlockOpacity = 1;
 var CurrentBlockWireFrame = true;
+var key_letter = 0;
+var current_letter = 0;
+var wildcard = 0;
+var z_start = 550; 
+var font_size = 10;
+var font_size_key = 50;
+// BKL load fonts and preload master letter and 
 
-// BKL load fonts 
-
-    var abc = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+//    var abc = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+//	var rand = Math.floor(Math.random() * (abc.length-1));
+//	var AB =  rand_letter();
+	
+/*     var abc = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";p
 	var rand = Math.floor(Math.random() * (abc.length-1));
-	var AB =  abc.charAt(rand);
+	var AB =  abc.charAt(rand); */	
+	var AB =  rand_letter();
 	var loader = new THREE.FontLoader();
 	loader.load('fonts/helvetiker_bold.typeface.json', function ( font ) {
-
-		var textGeo = new THREE.TextGeometry(AB, {
+		// load set of letters used for "current_letter" object 
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		//A 
+		var textGeo = new THREE.TextGeometry("A", {
 			font: font,
-			size: 100, // font size
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_A = new THREE.Mesh( textGeo, textMaterial );
+		Tetris.text_key = new THREE.Mesh( textGeo, textMaterial );
+		Tetris.text_active = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_A.position.x = -middle.x;
+		Tetris.text_A.position.y = -middle.y;
+		Tetris.text_A.position.z = z_start;
+		Tetris.text_A.castShadow = false;
+		Tetris.text_A.receiveShadow = false;	
+	// B	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("B", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+
+		Tetris.text_B = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_B.position.x = -middle.x;
+		Tetris.text_B.position.y = -middle.y;
+		Tetris.text_B.position.z = z_start;
+		Tetris.text_B.castShadow = false;
+		Tetris.text_B.receiveShadow = false;
+	// C	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("C", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_C = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_C.position.x = -middle.x;
+		Tetris.text_C.position.y = -middle.y;
+		Tetris.text_C.position.z = z_start;
+		Tetris.text_C.castShadow = false;
+		Tetris.text_C.receiveShadow = false;
+	// D	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("D", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_D = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_D.position.x = -middle.x;
+		Tetris.text_D.position.y = -middle.y;
+		Tetris.text_D.position.z = z_start;
+		Tetris.text_D.castShadow = false;
+		Tetris.text_D.receiveShadow = false;
+	// E	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("E", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_E = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_E.position.x = -middle.x;
+		Tetris.text_E.position.y = -middle.y;
+		Tetris.text_E.position.z = z_start;
+		Tetris.text_E.castShadow = false;
+		Tetris.text_E.receiveShadow = false;		
+	// F
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("F", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_F = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_F.position.x = -middle.x;
+		Tetris.text_F.position.y = -middle.y;
+		Tetris.text_F.position.z = z_start;
+		Tetris.text_F.castShadow = false;
+		Tetris.text_F.receiveShadow = false;	
+	// G
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("G", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_G = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_G.position.x = -middle.x;
+		Tetris.text_G.position.y = -middle.y;
+		Tetris.text_G.position.z = z_start;
+		Tetris.text_G.castShadow = false;
+		Tetris.text_G.receiveShadow = false;	
+	// H	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("H", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_H = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_H.position.x = -middle.x;
+		Tetris.text_H.position.y = -middle.y;
+		Tetris.text_H.position.z = z_start;
+		Tetris.text_H.castShadow = false;
+		Tetris.text_H.receiveShadow = false;
+	// I	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("I", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_I = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_I.position.x = -middle.x;
+		Tetris.text_I.position.y = -middle.y;
+		Tetris.text_I.position.z = z_start;
+		Tetris.text_I.castShadow = false;
+		Tetris.text_I.receiveShadow = false;	
+	// J	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("J", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_J = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_J.position.x = -middle.x;
+		Tetris.text_J.position.y = -middle.y;
+		Tetris.text_J.position.z = z_start;
+		Tetris.text_J.castShadow = false;
+		Tetris.text_J.receiveShadow = false;	
+	// K	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("K", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_K = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_K.position.x = -middle.x;
+		Tetris.text_K.position.y = -middle.y;
+		Tetris.text_K.position.z = z_start;
+		Tetris.text_K.castShadow = false;
+		Tetris.text_K.receiveShadow = false;	
+	// L	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("L", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_L = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_L.position.x = -middle.x;
+		Tetris.text_L.position.y = -middle.y;
+		Tetris.text_L.position.z = z_start;
+		Tetris.text_L.castShadow = false;
+		Tetris.text_L.receiveShadow = false;
+	// M	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("M", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_M = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_M.position.x = -middle.x;
+		Tetris.text_M.position.y = -middle.y;
+		Tetris.text_M.position.z = z_start;
+		Tetris.text_M.castShadow = false;
+		Tetris.text_M.receiveShadow = false;	
+	// N	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("N", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_N = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_N.position.x = -middle.x;
+		Tetris.text_N.position.y = -middle.y;
+		Tetris.text_N.position.z = z_start;
+		Tetris.text_N.castShadow = false;
+		Tetris.text_N.receiveShadow = false;	
+	// O	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("O", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_O = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_O.position.x = -middle.x;
+		Tetris.text_O.position.y = -middle.y;
+		Tetris.text_O.position.z = z_start;
+		Tetris.text_O.castShadow = false;
+		Tetris.text_O.receiveShadow = false;	
+	// P	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("P", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_P = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_P.position.x = -middle.x;
+		Tetris.text_P.position.y = -middle.y;
+		Tetris.text_P.position.z = z_start;
+		Tetris.text_P.castShadow = false;
+		Tetris.text_P.receiveShadow = false;	
+	// Q	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("Q", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_Q = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_Q.position.x = -middle.x;
+		Tetris.text_Q.position.y = -middle.y;
+		Tetris.text_Q.position.z = z_start;
+		Tetris.text_Q.castShadow = false;
+		Tetris.text_Q.receiveShadow = false;	
+	// R	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("R", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_R = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_R.position.x = -middle.x;
+		Tetris.text_R.position.y = -middle.y;
+		Tetris.text_R.position.z = z_start;
+		Tetris.text_R.castShadow = false;
+		Tetris.text_R.receiveShadow = false;	
+	// S	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("S", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_S = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_S.position.x = -middle.x;
+		Tetris.text_S.position.y = -middle.y;
+		Tetris.text_S.position.z = z_start;
+		Tetris.text_S.castShadow = false;
+		Tetris.text_S.receiveShadow = false;	
+	// T	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("T", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_T = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_T.position.x = -middle.x;
+		Tetris.text_T.position.y = -middle.y;
+		Tetris.text_T.position.z = z_start;
+		Tetris.text_T.castShadow = false;
+		Tetris.text_T.receiveShadow = false;	
+	// U	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("U", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_U = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_U.position.x = -middle.x;
+		Tetris.text_U.position.y = -middle.y;
+		Tetris.text_U.position.z = z_start;
+		Tetris.text_U.castShadow = false;
+		Tetris.text_U.receiveShadow = false;
+	// V	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("V", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_V = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_V.position.x = -middle.x;
+		Tetris.text_V.position.y = -middle.y;
+		Tetris.text_V.position.z = z_start;
+		Tetris.text_V.castShadow = false;
+		Tetris.text_V.receiveShadow = false;
+	// W	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("W", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_W = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_W.position.x = -middle.x;
+		Tetris.text_W.position.y = -middle.y;
+		Tetris.text_W.position.z = z_start;
+		Tetris.text_W.castShadow = false;
+		Tetris.text_W.receiveShadow = false;	
+	// X	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("X", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_X = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_X.position.x = -middle.x;
+		Tetris.text_X.position.y = -middle.y;
+		Tetris.text_X.position.z = z_start;
+		Tetris.text_X.castShadow = false;
+		Tetris.text_X.receiveShadow = false;
+	// Y	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("Y", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_Y = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_Y.position.x = -middle.x;
+		Tetris.text_Y.position.y = -middle.y;
+		Tetris.text_Y.position.z = z_start;
+		Tetris.text_Y.castShadow = false;
+		Tetris.text_Y.receiveShadow = false;	
+	// Z	
+		var textMaterial = new THREE.MeshPhongMaterial( { color: Math.random() * 0xffffff, specular: Math.random() * 0xffffff, reflectivity: Math.random() * 0xffffff, shininess: Math.random() * 100} );
+		var textGeo = new THREE.TextGeometry("Z", {
+			font: font,
+			size: font_size, // font size
+			height: 10, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_Z = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_Z.position.x = -middle.x;
+		Tetris.text_Z.position.y = -middle.y;
+		Tetris.text_Z.position.z = z_start;
+		Tetris.text_Z.castShadow = false;
+		Tetris.text_Z.receiveShadow = false;	
+	//  read this	
+	// repeat and load letters for key_letter object -> these can not be shared. 
+	//  read this 
+		var textGeo = new THREE.TextGeometry("A", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_A = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_A.position.x = -middle.x;
+		Tetris.text_key_A.position.y = -middle.y;
+		Tetris.text_key_A.position.z = z_start;
+		Tetris.text_key_A.castShadow = false;
+		Tetris.text_key_A.receiveShadow = false;	
+	// B	
+		var textGeo = new THREE.TextGeometry("B", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_B = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_B.position.x = -middle.x;
+		Tetris.text_key_B.position.y = -middle.y;
+		Tetris.text_key_B.position.z = z_start;
+		Tetris.text_key_B.castShadow = false;
+		Tetris.text_key_B.receiveShadow = false;
+	// C	
+		var textGeo = new THREE.TextGeometry("C", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_C = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_C.position.x = -middle.x;
+		Tetris.text_key_C.position.y = -middle.y;
+		Tetris.text_key_C.position.z = z_start;
+		Tetris.text_key_C.castShadow = false;
+		Tetris.text_key_C.receiveShadow = false;
+	// D	
+		var textGeo = new THREE.TextGeometry("D", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_D = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_D.position.x = -middle.x;
+		Tetris.text_key_D.position.y = -middle.y;
+		Tetris.text_key_D.position.z = z_start;
+		Tetris.text_key_D.castShadow = false;
+		Tetris.text_key_D.receiveShadow = false;
+	// E	
+		var textGeo = new THREE.TextGeometry("E", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_E = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_E.position.x = -middle.x;
+		Tetris.text_key_E.position.y = -middle.y;
+		Tetris.text_key_E.position.z = z_start;
+		Tetris.text_key_E.castShadow = false;
+		Tetris.text_key_E.receiveShadow = false;		
+	// F	
+		var textGeo = new THREE.TextGeometry("F", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_F = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_F.position.x = -middle.x;
+		Tetris.text_key_F.position.y = -middle.y;
+		Tetris.text_key_F.position.z = z_start;
+		Tetris.text_key_F.castShadow = false;
+		Tetris.text_key_F.receiveShadow = false;	
+	// G	
+		var textGeo = new THREE.TextGeometry("G", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_G = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_G.position.x = -middle.x;
+		Tetris.text_key_G.position.y = -middle.y;
+		Tetris.text_key_G.position.z = z_start;
+		Tetris.text_key_G.castShadow = false;
+		Tetris.text_key_G.receiveShadow = false;	
+	// H	
+		var textGeo = new THREE.TextGeometry("H", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_H = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_H.position.x = -middle.x;
+		Tetris.text_key_H.position.y = -middle.y;
+		Tetris.text_key_H.position.z = z_start;
+		Tetris.text_key_H.castShadow = false;
+		Tetris.text_key_H.receiveShadow = false;
+	// I	
+		var textGeo = new THREE.TextGeometry("I", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_I = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_I.position.x = -middle.x;
+		Tetris.text_key_I.position.y = -middle.y;
+		Tetris.text_key_I.position.z = z_start;
+		Tetris.text_key_I.castShadow = false;
+		Tetris.text_key_I.receiveShadow = false;	
+	// J	
+		var textGeo = new THREE.TextGeometry("J", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_J = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_J.position.x = -middle.x;
+		Tetris.text_key_J.position.y = -middle.y;
+		Tetris.text_key_J.position.z = z_start;
+		Tetris.text_key_J.castShadow = false;
+		Tetris.text_key_J.receiveShadow = false;	
+	// K	
+		var textGeo = new THREE.TextGeometry("K", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_K = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_K.position.x = -middle.x;
+		Tetris.text_key_K.position.y = -middle.y;
+		Tetris.text_key_K.position.z = z_start;
+		Tetris.text_key_K.castShadow = false;
+		Tetris.text_key_K.receiveShadow = false;	
+	// L	
+		var textGeo = new THREE.TextGeometry("L", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_L = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_L.position.x = -middle.x;
+		Tetris.text_key_L.position.y = -middle.y;
+		Tetris.text_key_L.position.z = z_start;
+		Tetris.text_key_L.castShadow = false;
+		Tetris.text_key_L.receiveShadow = false;
+	// M	
+		var textGeo = new THREE.TextGeometry("M", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_M = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_M.position.x = -middle.x;
+		Tetris.text_key_M.position.y = -middle.y;
+		Tetris.text_key_M.position.z = z_start;
+		Tetris.text_key_M.castShadow = false;
+		Tetris.text_key_M.receiveShadow = false;	
+	// N	
+		var textGeo = new THREE.TextGeometry("N", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_N = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_N.position.x = -middle.x;
+		Tetris.text_key_N.position.y = -middle.y;
+		Tetris.text_key_N.position.z = z_start;
+		Tetris.text_key_N.castShadow = false;
+		Tetris.text_key_N.receiveShadow = false;	
+	// O	
+		var textGeo = new THREE.TextGeometry("O", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_O = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_O.position.x = -middle.x;
+		Tetris.text_key_O.position.y = -middle.y;
+		Tetris.text_key_O.position.z = z_start;
+		Tetris.text_key_O.castShadow = false;
+		Tetris.text_key_O.receiveShadow = false;	
+	// P	
+		var textGeo = new THREE.TextGeometry("P", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_P = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_P.position.x = -middle.x;
+		Tetris.text_key_P.position.y = -middle.y;
+		Tetris.text_key_P.position.z = z_start;
+		Tetris.text_key_P.castShadow = false;
+		Tetris.text_key_P.receiveShadow = false;	
+	// Q	
+		var textGeo = new THREE.TextGeometry("Q", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_Q = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_Q.position.x = -middle.x;
+		Tetris.text_key_Q.position.y = -middle.y;
+		Tetris.text_key_Q.position.z = z_start;
+		Tetris.text_key_Q.castShadow = false;
+		Tetris.text_key_Q.receiveShadow = false;	
+	// R	
+		var textGeo = new THREE.TextGeometry("R", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_R = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_R.position.x = -middle.x;
+		Tetris.text_key_R.position.y = -middle.y;
+		Tetris.text_key_R.position.z = z_start;
+		Tetris.text_key_R.castShadow = false;
+		Tetris.text_key_R.receiveShadow = false;	
+	// S	
+		var textGeo = new THREE.TextGeometry("S", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_S = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_S.position.x = -middle.x;
+		Tetris.text_key_S.position.y = -middle.y;
+		Tetris.text_key_S.position.z = z_start;
+		Tetris.text_key_S.castShadow = false;
+		Tetris.text_key_S.receiveShadow = false;	
+	// T	
+		var textGeo = new THREE.TextGeometry("T", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_T = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_T.position.x = -middle.x;
+		Tetris.text_key_T.position.y = -middle.y;
+		Tetris.text_key_T.position.z = z_start;
+		Tetris.text_key_T.castShadow = false;
+		Tetris.text_key_T.receiveShadow = false;	
+	// U	
+		var textGeo = new THREE.TextGeometry("U", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_U = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_U.position.x = -middle.x;
+		Tetris.text_key_U.position.y = -middle.y;
+		Tetris.text_key_U.position.z = z_start;
+		Tetris.text_key_U.castShadow = false;
+		Tetris.text_key_U.receiveShadow = false;
+	// V	
+		var textGeo = new THREE.TextGeometry("V", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_V = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_V.position.x = -middle.x;
+		Tetris.text_key_V.position.y = -middle.y;
+		Tetris.text_key_V.position.z = z_start;
+		Tetris.text_key_V.castShadow = false;
+		Tetris.text_key_V.receiveShadow = false;
+	// W	
+		var textGeo = new THREE.TextGeometry("W", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_W = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_W.position.x = -middle.x;
+		Tetris.text_key_W.position.y = -middle.y;
+		Tetris.text_key_W.position.z = z_start;
+		Tetris.text_key_W.castShadow = false;
+		Tetris.text_key_W.receiveShadow = false;	
+	// X	
+		var textGeo = new THREE.TextGeometry("X", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_X = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_X.position.x = -middle.x;
+		Tetris.text_key_X.position.y = -middle.y;
+		Tetris.text_key_X.position.z = z_start;
+		Tetris.text_key_X.castShadow = false;
+		Tetris.text_key_X.receiveShadow = false;
+	// Y	
+		var textGeo = new THREE.TextGeometry("Y", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_Y = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_Y.position.x = -middle.x;
+		Tetris.text_key_Y.position.y = -middle.y;
+		Tetris.text_key_Y.position.z = z_start;
+		Tetris.text_key_Y.castShadow = false;
+		Tetris.text_key_Y.receiveShadow = false;	
+	// Z	
+		var textGeo = new THREE.TextGeometry("Z", {
+			font: font,
+			size: font_size_key, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		Tetris.text_key_Z = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
+
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+		Tetris.text_key_Z.position.x = -middle.x;
+		Tetris.text_key_Z.position.y = -middle.y;
+		Tetris.text_key_Z.position.z = z_start;
+		Tetris.text_key_Z.castShadow = false;
+		Tetris.text_key_Z.receiveShadow = false;		
+
+
+		
+	});
+
+
+/*  	var loader2 = new THREE.FontLoader();
+	loader2.load('fonts/helvetiker_bold.typeface.json', function ( font ) {
+
+		var textGeo = new THREE.TextGeometry(rand_letter(), {
+			font: font,
+			size: 45, // font size
 			height: 20, // how much extrusion (how thick / deep are the letters)
 			curveSegments: 12,
 			bevelThickness: 1,
@@ -38,7 +1336,6 @@ var CurrentBlockWireFrame = true;
 		});
 		textGeo.computeBoundingBox();
 		var textMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0xffffff } );
-		Tetris.text1 = new THREE.Mesh( textGeo, textMaterial );
 		Tetris.text2 = new THREE.Mesh( textGeo, textMaterial );
 		// find middle of font
 		var middle = new THREE.Vector3();
@@ -47,17 +1344,49 @@ var CurrentBlockWireFrame = true;
 		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
 		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
 		
-		Tetris.text1.position.x = -middle.x;
-		Tetris.text1.position.y = -middle.y;
-		Tetris.text1.position.z = 550;
-		Tetris.text1.castShadow = false;
-		Tetris.text1.receiveShadow = false;
-		Tetris.text2 = Tetris.text1;
-		Tetris.text1.layers.set(0);	
-		Tetris.text2.layers.set(0);	
+ 		Tetris.text2.position.x = -middle.x;
+		Tetris.text2.position.y = -middle.y;
+		Tetris.text2.position.z = 550;
+		Tetris.text2.castShadow = false;
+		Tetris.text2.receiveShadow = false;
+		Tetris.text2.layers.set(1);	 
+	});	  */
+	
+	
+/* function refresh_letter() {	
+	var loader2 = new THREE.FontLoader();
+	loader2.load('fonts/helvetiker_bold.typeface.json', function ( font ) {
 
-	});
+		var textGeo = new THREE.TextGeometry(rand_letter(), {
+			font: font,
+			size: 45, // font size
+			height: 20, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+		textGeo.computeBoundingBox();
+		var textMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0xffffff } );
+		Tetris.text2 = new THREE.Mesh( textGeo, textMaterial );
+		// find middle of font
+		var middle = new THREE.Vector3();
 
+		middle.x = (textGeo.boundingBox.max.x + textGeo.boundingBox.min.x) / 2;
+		middle.y = (textGeo.boundingBox.max.y + textGeo.boundingBox.min.y) / 2;
+		middle.z = (textGeo.boundingBox.max.z + textGeo.boundingBox.min.z) / 2;
+		
+ 		Tetris.text2.position.x = -middle.x;
+		Tetris.text2.position.y = -middle.y;
+		Tetris.text2.position.z = 550;
+		Tetris.text2.castShadow = false;
+		Tetris.text2.receiveShadow = false;
+		Tetris.text2.layers.set(1);	 
+	});	
+
+} */
+
+	
 Tetris.init = function () {
     Tetris.sounds["theme"] = document.getElementById("audio_theme");  
     Tetris.sounds["collision"] = document.getElementById("audio_collision");  
@@ -67,6 +1396,9 @@ Tetris.init = function () {
 
     Tetris.sounds["theme"].play();
     // set the scene size
+	
+	// BKL create inital random letter
+//	refresh_letter();
 
     var WIDTH = window.innerWidth,
         HEIGHT = window.innerHeight;
@@ -89,7 +1421,7 @@ Tetris.init = function () {
     Tetris.scene = new THREE.Scene();
 
     // the camera starts at 0,0,0 so pull it back
-    Tetris.camera.position.z = 1150;
+    Tetris.camera.position.z = 400;
 	Tetris.camera.position.y = 0;
     Tetris.scene.add(Tetris.camera);
 
@@ -103,7 +1435,7 @@ Tetris.init = function () {
     var boundingBoxConfig = {
         width:1440,
         height:720,
-        depth:1200,
+        depth:1700,
         splitX:6,
         splitY:6,
         splitZ:20
@@ -114,7 +1446,7 @@ Tetris.init = function () {
     Tetris.Board.init(boundingBoxConfig.splitX, boundingBoxConfig.splitY, boundingBoxConfig.splitZ);
 	//BKL adding texture to bounding box
     var texture1 = THREE.ImageUtils.loadTexture( 'img/bricks.jpg' );
-    var texture2 = THREE.ImageUtils.loadTexture( 'img/stars.jpg' );
+    var texture2 = THREE.ImageUtils.loadTexture( 'img/sky.png' );
 //		texture2.wrapS = texture2.wrapT = THREE.RepeatWrapping;
 //	    texture2.repeat.set( 6, 6 );
 	var material = new THREE.MeshLambertMaterial({ map: texture2, side: THREE.BackSide, opacity: 0.8, transparent: true });
@@ -162,7 +1494,15 @@ Tetris.init = function () {
 //	boundingBox.setColor(0xFFFFFF)  //change color using hex value or
 //	boundingBox.setColor("blue")    //set material color by using color name
 
-    Tetris.scene.add(boundingBox);
+//    Tetris.scene.add(boundingBox);
+
+// Sphere Bounding Box 
+	var sphere_geometry = new THREE.SphereGeometry(1500, 32, 32);
+	var sphere_material = new THREE.MeshLambertMaterial({ map: texture2, side: THREE.BackSide, opacity: 0.8, transparent: true });
+	pano = new THREE.Mesh(sphere_geometry, sphere_material);
+	Tetris.scene.add(pano);
+	
+	
 //  Adding Light
 	var light = new THREE.AmbientLight( 0x404040 );
 	Tetris.scene.add( light );
@@ -182,6 +1522,11 @@ Tetris.init = function () {
 // BKL Use to disable stat window 	
 //    document.body.appendChild(Tetris.stats.domElement);
 
+// BKL initialize random letters. 
+	key_letter = rand_num();
+	rand_set_key(key_letter);
+	rand_set_active(1+key_letter);
+	
     document.getElementById("play_button").addEventListener('click', function (event) {
         event.preventDefault();
         Tetris.start();
@@ -220,27 +1565,32 @@ Tetris.start = function () {
 	// Position cube mesh
 
 	Tetris.cube1.position.z = 200;
-	Tetris.cube1.position.x = 0;
+	Tetris.cube1.position.x = 200;
 	Tetris.cube1.position.y = 0;
-	Tetris.cube1.layers.set(1);
+	Tetris.cube1.layers.set(0);
 	
 	Tetris.cubeoutline1.position = Tetris.cube1.position;
 	Tetris.cubeoutline1.scale.multiplyScalar(1.02);
 	
-	Tetris.cube2.position.z = 200;
-	Tetris.cube2.position.x = 0;
+	Tetris.cube2.position.z = -600;
+	Tetris.cube2.position.x = -200;
 	Tetris.cube2.position.y = 0;
-	Tetris.cube2.layers.set(2);
+	Tetris.cube2.layers.set(1);
 	Tetris.cubeoutline2.position = Tetris.cube2.position;
 	Tetris.cubeoutline2.scale.multiplyScalar(1.02);
-	
-	Tetris.scene.add(Tetris.cube1);
+//	Tetris.scene.add(Tetris.cube1);
 //	Tetris.scene.add(Tetris.cubeoutline1);
-	Tetris.scene.add(Tetris.cube2);
+//	Tetris.scene.add(Tetris.cube2);
 //	Tetris.scene.add(Tetris.cubeoutline2); 
     //// add text to cube of TextGeometry
-	Tetris.scene.add(Tetris.text1);
-//	Tetris.scene.add(Tetris.text2);
+	Tetris.text_key.position.x = 25;
+	Tetris.text_key.position.z = 200;
+	Tetris.text_active.position.x = -25;
+	Tetris.text_active.position.z = -1400;
+//	Tetris.cube2.position.x = -200;
+	Tetris.scene.add(Tetris.text_key);  
+	Tetris.scene.add(Tetris.text_active);
+	Tetris.text_active.visible = true;
 
 // End TextGeometry
 	//BKL 
@@ -264,7 +1614,7 @@ Tetris.start = function () {
 };
 
 
-Tetris.gameStepTime = 50;
+Tetris.gameStepTime = 70;
 
 Tetris.frameTime = 0; // ms
 Tetris.cumulatedFrameTime = 0; // ms
@@ -292,31 +1642,98 @@ Tetris.animate = function () {
 */	
 //		Tetris.Block.mesh.children["0"].material.opacity = CurrentBlockOpacity;
 //		Tetris.Block.mesh.children["1"].material.opacity = CurrentBlockOpacity;
-// BKL speed up the game the higher the score. 
-/*	
-	if (Tetris.currentPoints > 9999){
-		Tetris.gameStepTime = 100;	
-	} else if (Tetris.currentPoints > 3999){
-		Tetris.gameStepTime = 200;	
-	} else if (Tetris.currentPoints > 2999){
-		Tetris.gameStepTime = 300;	
-	} else if (Tetris.currentPoints > 1999){
-		Tetris.gameStepTime = 400;
-	} else if (Tetris.currentPoints > 999){
-		Tetris.gameStepTime = 500;
-	}			
-*/
+
     while (Tetris.cumulatedFrameTime > Tetris.gameStepTime) {
         Tetris.cumulatedFrameTime -= Tetris.gameStepTime;
+
+// Get new random letter when Z gets too close to player
+	if (Tetris.text_active.position.z > 400) {
+			Tetris.text_active.visible = false;
+			if (Math.abs(key_letter-current_letter) < 5){
+				current_letter=key_letter; 
+			    }
+			else {current_letter = rand_num();
+				}
+			current_letter = rand_num();
+			rand_set_active(current_letter);
+			Tetris.text_active.position.x = -25;
+			Tetris.text_active.position.z = -1400;
+			Tetris.scene.add(Tetris.text_active);
+			Tetris.text_active.visible = true;		
+	}
+	
+    switch (level) {
+        //case
+		// BKL changed from arrows to use BT keyboard with phone
+        case 1: //move
+			Tetris.text_key.visible = false;
+//			Tetris.scene.remove(Tetris.text_key);
+			Tetris.cube1.layers.set(0);
+			Tetris.cube2.layers.set(VR_layers);
+			if (Tetris.cube1.position.x < 140){
+			Tetris.text_key.position.x = Tetris.text_key.position.x +3;
+//			Tetris.text_active[0].position.x = Tetris.text_active[0].position.x -3;
+			Tetris.cube1.position.x = Tetris.cube1.position.x +4;
+			Tetris.cube2.position.x = Tetris.cube2.position.x -4;
+			Tetris.cube1.position.z = Tetris.cube1.position.z -3;
+			Tetris.cube2.position.z = Tetris.cube2.position.z -3;
+			Tetris.text_key.position.z = Tetris.text_key.position.z -3;
+//			Tetris.text_active[0].position.z = Tetris.text_active[0].position.z -3;
+			} 
+			else {
+				Tetris.cube1.rotation.y += Tetris.frameTime * .0006;
+				Tetris.cube1.rotation.x += Tetris.frameTime * .0006;
+				Tetris.cube2.rotation.y += -Tetris.frameTime * .0006;
+				Tetris.cube2.rotation.x += -Tetris.frameTime * .0006;
+			}
+			
+            break;
+		case 2: //freeze and show letter
+			Tetris.text_key.visible = true;
+//			Tetris.text_active[0].layers.set(VR_layers);
+			Tetris.cube2.layers.set(VR_layers);
+//			Tetris.text_active[0].visible = true;
+			Tetris.cube1.rotation.y = 0;
+			Tetris.cube1.rotation.x = 0;
+			Tetris.cube1.rotation.z = 0;
+			Tetris.cube2.rotation.y = 0;
+			Tetris.cube2.rotation.x = 0;
+			Tetris.cube2.rotation.z = 0;
+//			refresh_letter();
+			Tetris.text_key.needsUpdate = true;
+//			Tetris.scene.add(Tetris.text_key);
+						
+            break;	
+		case 3: //start game
+//			Tetris.text_active[0].layers.set(VR_layers);
+			Tetris.cube2.layers.set(VR_layers);
+						
+			
+			Tetris.text_key.needsUpdate = true;			
+            break;	
+		case 4: //start game
+//			Tetris.text_active[0].layers.set(VR_layers);
+			Tetris.cube2.layers.set(VR_layers);
+//			refresh_letter();
+						
+            break;	
+		
+	}			
+
 //        Tetris.Block.move(0, 0, -0.5);
 //		Tetris.Block.rotate(1, 1, 1);
-//	Tetris.text1.position.z = Tetris.text1.position.z +1;
+//	Tetris.scene.remove(Tetris.text_active[0]);
+//  Tetris.scene.remove(Tetris.cube1);
+//	Tetris.scene.remove(Tetris.text_active[0]);
+//	refresh_letter();
+//	Tetris.scene.add(Tetris.cube1);
+//	Tetris.scene.add(Tetris.text_active[0]);
+	Tetris.text_active.position.z = Tetris.text_active.position.z +10;
+//	Tetris.effect.render(scene, camera);
 //	Tetris.cube1.rotation.y += Tetris.frameTime * .0006;
 //	Tetris.cube1.rotation.x += Tetris.frameTime * .0006;
 
-/* 		Tetris.cube1.position.z = Tetris.cube1.position.z +1;
-		Tetris.cube2.position.z = Tetris.cube2.position.z +1;
-		Tetris.text1.position.z = Tetris.text1.position.z +1; */
+
 		
     }
 	
@@ -358,6 +1775,195 @@ function onResize() {
   Tetris.effect.setSize(window.innerWidth, window.innerHeight);
   Tetris.camera.aspect = window.innerWidth / window.innerHeight;
   Tetris.camera.updateProjectionMatrix();
+}
+
+// BKL added to generate randome letters
+function rand_letter() {
+//    var abc = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	var abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	var rand = Math.floor(Math.random() * (abc.length-1));
+	return  abc.charAt(rand);
+}
+
+function rand_num() {
+	var rand = Math.floor(Math.random() * (26-1+1))+1;
+	return  rand;
+}
+
+function wild_num() {
+	var rand = Math.floor(Math.random() * (8-1+1))+1;
+	return  rand;
+}
+
+function rand_set_key (rand_key_value) {
+		switch (rand_key_value) {
+			case 1:
+				Tetris.text_key = Tetris.text_key_A;
+				break;
+			case 2: 
+				Tetris.text_key = Tetris.text_key_B;
+				break;
+			case 3: 
+				Tetris.text_key = Tetris.text_key_C;
+				break;
+			case 4: 
+				Tetris.text_key = Tetris.text_key_D;
+				break;	
+			case 5:
+				Tetris.text_key = Tetris.text_key_E;
+				break;
+			case 6: 
+				Tetris.text_key = Tetris.text_key_F;
+				break;
+			case 7: 
+				Tetris.text_key = Tetris.text_key_G;
+				break;
+			case 8: 
+				Tetris.text_key = Tetris.text_key_H;
+				break;			
+			case 9: 
+				Tetris.text_key = Tetris.text_key_I;
+				break;
+			case 10: 
+				Tetris.text_key = Tetris.text_key_J;
+				break;
+			case 11: 
+				Tetris.text_key = Tetris.text_key_K;
+				break;			
+			case 12: 
+				Tetris.text_key = Tetris.text_key_L;
+				break;
+			case 13: 
+				Tetris.text_key = Tetris.text_key_M;
+				break;
+			case 14: 
+				Tetris.text_key = Tetris.text_key_N;
+				break;
+			case 15: 
+				Tetris.text_key = Tetris.text_key_O;
+				break;
+			case 16: 
+				Tetris.text_key = Tetris.text_key_P;
+				break;
+			case 17: 
+				Tetris.text_key = Tetris.text_key_Q;
+				break;	
+			case 18: 
+				Tetris.text_key = Tetris.text_key_R;
+				break;
+			case 19: 
+				Tetris.text_key = Tetris.text_key_S;
+				break;
+			case 20: 
+				Tetris.text_key = Tetris.text_key_T;
+				break;			
+			case 21:
+				Tetris.text_key = Tetris.text_key_U;
+				break;
+			case 22: 
+				Tetris.text_key = Tetris.text_key_V;
+				break;
+			case 23: 
+				Tetris.text_key = Tetris.text_key_W;
+				break;
+			case 24: 
+				Tetris.text_key = Tetris.text_key_X;
+				break;	
+			case 25: 
+				Tetris.text_key = Tetris.text_key_Y;
+				break;
+			case 26: 
+				Tetris.text_key = Tetris.text_key_Z;
+				break;		
+		}	
+		Tetris.text_key.layers.set(0);
+}
+
+function rand_set_active (rand_key_value) {
+		switch (rand_key_value) {
+			case 1:
+				Tetris.text_active = Tetris.text_A;
+				break;
+			case 2: 
+				Tetris.text_active = Tetris.text_B;
+				break;
+			case 3: 
+				Tetris.text_active = Tetris.text_C;
+				break;
+			case 4: 
+				Tetris.text_active = Tetris.text_D;
+				break;	
+			case 5:
+				Tetris.text_active = Tetris.text_E;
+				break;
+			case 6: 
+				Tetris.text_active = Tetris.text_F;
+				break;
+			case 7: 
+				Tetris.text_active = Tetris.text_G;
+				break;
+			case 8: 
+				Tetris.text_active = Tetris.text_H;
+				break;			
+			case 9: 
+				Tetris.text_active = Tetris.text_I;
+				break;
+			case 10: 
+				Tetris.text_active = Tetris.text_J;
+				break;
+			case 11: 
+				Tetris.text_active = Tetris.text_K;
+				break;			
+			case 12: 
+				Tetris.text_active = Tetris.text_L;
+				break;
+			case 13: 
+				Tetris.text_active = Tetris.text_M;
+				break;
+			case 14: 
+				Tetris.text_active = Tetris.text_N;
+				break;
+			case 15: 
+				Tetris.text_active = Tetris.text_O;
+				break;
+			case 16: 
+				Tetris.text_active = Tetris.text_P;
+				break;
+			case 17: 
+				Tetris.text_active = Tetris.text_Q;
+				break;	
+			case 18: 
+				Tetris.text_active = Tetris.text_R;
+				break;
+			case 19: 
+				Tetris.text_active = Tetris.text_S;
+				break;
+			case 20: 
+				Tetris.text_active = Tetris.text_T;
+				break;			
+			case 21:
+				Tetris.text_active = Tetris.text_U;
+				break;
+			case 22: 
+				Tetris.text_active = Tetris.text_V;
+				break;
+			case 23: 
+				Tetris.text_active = Tetris.text_W;
+				break;
+			case 24: 
+				Tetris.text_active = Tetris.text_X;
+				break;	
+			case 25: 
+				Tetris.text_active = Tetris.text_Y;
+				break;
+			case 26: 
+				Tetris.text_active = Tetris.text_Z;
+				break;	
+			case 27: 
+				Tetris.text_active = Tetris.text_Z;
+				break;					
+		}	
+		Tetris.text_active.layers.set(1);
 }
 
 function onVRDisplayPresentChange() {
@@ -416,40 +2022,83 @@ window.addEventListener('keydown', function (event) {
         //case
 		// BKL changed from arrows to use BT keyboard with phone
         case 73: // up (i)
-            Tetris.Block.move(0, 1, 0);
+  
             break;
         case 75: // down (k)
-            Tetris.Block.move(0, -1, 0);
+          
             break;
         case 74: // left(j)
-            Tetris.Block.move(-1, 0, 0);
+          
             break;
         case 76: // right (l)
-            Tetris.Block.move(1, 0, 0);
+            //Tetris.Block.move(1, 0, 0);
+			if (key_letter != current_letter){
+				Tetris.addPoints(10);
+			    if (Math.abs(key_letter-current_letter) < 10){
+				current_letter=key_letter; 
+			    }
+				else {current_letter = rand_num();
+				}
+			}
+			else {current_letter = rand_num();
+			}
+			Tetris.text_active.visible = false;
+			rand_set_active(current_letter);
+			Tetris.text_active.position.x = -10;
+			Tetris.text_active.position.z = -1400;
+			Tetris.scene.add(Tetris.text_active);
+			Tetris.text_active.visible = true;	
+					
             break;
+			
         case 32: // space
-            Tetris.Block.moveto(0, 0, -0.5);
+		
+			if (key_letter == current_letter){	
+			// reset for next round 
+				Tetris.text_key.visible = false;
+				key_letter = rand_num();
+				rand_set_key(key_letter);
+				Tetris.text_key.position.x = 25;
+				Tetris.text_key.position.z = 200;
+				Tetris.scene.add(Tetris.text_key);
+				Tetris.text_key.visible = true;
+
+				//
+				Tetris.text_active.visible = false;
+				current_letter = rand_num();
+				rand_set_active(current_letter);
+				Tetris.text_active.position.x = -25;
+				Tetris.text_active.position.z = -1400;
+				Tetris.scene.add(Tetris.text_active);
+				Tetris.text_active.visible = true;
+				// scoring update
+				Tetris.addPoints(100);
+
+			}
+			else {
+			Tetris.sounds["gameover"].play();	
+			}
             break;
 
         case 87: // up (w)
-            Tetris.Block.rotate(90, 0, 0);
+
             break;
         case 83: // down (s)
-            Tetris.Block.rotate(-90, 0, 0);
+
             break;
 
         case 65: // left(a)
-            Tetris.Block.rotate(0, 0, 90);
+
             break;
         case 68: // right (d)
-            Tetris.Block.rotate(0, 0, -90);
+
             break;
 
         case 81: // (q)
-            Tetris.Block.rotate(0, 90, 0);
+ 
             break;
         case 69: // (e)
-            Tetris.Block.rotate(0, -90, 0);
+
             break;
 		// BKL adding keyboard commands 	
 		case 80: // (p)
@@ -468,9 +2117,12 @@ window.addEventListener('keydown', function (event) {
             break;	
 		case 49:// (1)
 			VR_layers = 1;
+			Tetris.sounds["move"].play();
             break;			
 		case 50: //2
 			VR_layers = 2;
+			Tetris.sounds["move"].play();
+			Tetris.sounds["move"].play();
             break;		
 		case 51: //3
 			level = 1;
@@ -478,7 +2130,10 @@ window.addEventListener('keydown', function (event) {
 		case 52: //4
 			level = 0;
             break;		
-			 
+		case 13: // enter key
+			Tetris.sounds["move"].play();
+			level = level + 1;
+            break;		 
     }
 }, false);	
 
