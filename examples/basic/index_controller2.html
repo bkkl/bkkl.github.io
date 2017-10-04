@@ -1,0 +1,405 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>THREE.VRController demo</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+		<style>
+			body { margin: 0; overflow: hidden; }
+			
+		
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  color: #fff;
+  margin: 0px;
+  padding: 0;
+  overflow: hidden;
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+}
+
+#buttons {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  background: white;
+}
+
+			
+			
+			
+		</style>
+		
+		
+		
+<!-- 		<script src="https://cdn.rawgit.com/mrdoob/three.js/r87/build/three.js"></script>
+		<script src="https://cdn.rawgit.com/mrdoob/three.js/r87/examples/js/vr/WebVR.js"></script> -->
+		<!-- <script src="https://cdn.rawgit.com/dataarts/dat.guiVR/master/build/datguivr.js"></script> -->
+<!-- 		<script src="VRController.js"></script> -->
+		
+				<!-- three.js library -->
+		<script src="node_modules/three/build/three.js"></script>
+
+		<!-- VRControls.js applies the WebVR transformations to a three.js camera object. -->
+		<script src="node_modules/three/examples/js/controls/VRControls.js"></script>
+
+		<!-- VREffect.js handles stereo camera setup and rendering.  -->
+		<script src="node_modules/three/examples/js/effects/VREffect.js"></script>
+
+		<!-- A polyfill for the WebVR API.  -->
+		<script src="../../build/webvr-polyfill.js"></script>
+
+		<!-- Handles controller inputs.  -->
+		<script src="node_modules/three/examples/js/VRController.js"></script>
+		
+	</head>
+<body>
+
+  <div id="buttons">
+    <button id="fullscreen">Fullscreen</button>
+    <button id="vr">VR (WebVR/Mobile only)</button>
+    <button id="reset">Reset</button>
+  </div>
+
+
+
+
+
+<script>
+//  Hi! I think you’re going to like this VR stuff :)
+//  This index.html file created by Jeff Nusz / http://custom-logic.com
+//  refactored and commented by Stewart Smith / http://stewartsmith.io
+//  because this stuff is fun and you can learn it with us!
+//  The real heart of this is VRController.js -- check it out!
+
+
+
+
+//  Does this browser support the WebVR API?
+//  Here’s how to download and configure one that does:
+//  https://webvr.rocks
+
+//WEBVR.checkAvailability().catch( function( message ){
+
+//	document.body.appendChild( WEBVR.getMessageContainer( message ))
+//})
+
+
+//  Regardless, let’s kick off the Three.js basics here:
+
+var camera, scene, renderer, controls
+
+
+//  We need a renderer.
+
+renderer = new THREE.WebGLRenderer({ antialias: true })
+renderer.setClearColor( 0x101010 )
+renderer.setPixelRatio( window.devicePixelRatio )
+renderer.setSize( window.innerWidth, window.innerHeight )
+//renderer.vr.enabled = true//  Well that’s pretty important! (New in r86.)
+//renderer.vr.standing = true
+document.body.appendChild( renderer.domElement )
+
+
+//  Camera, VRControls to move the camera as your headset moves,
+// (NOTE that VRControls and VRController are NOT related!!),
+//  and a Scene to render it to.
+
+camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 10 )
+scene  = new THREE.Scene()
+
+
+// Apply VR headset positional data to camera.
+var controls = new THREE.VRControls(camera);
+
+// Apply VR stereo rendering to renderer.
+var effect = new THREE.VREffect(renderer);
+effect.setSize(window.innerWidth, window.innerHeight);
+
+//  This button is important. It toggles between normal in-browser view
+//  and the brand new WebVR in-your-goggles view!
+
+//WEBVR.getVRDisplays( function( display ){
+
+//	renderer.setDevice( display )
+//	document.body.appendChild( WEBVR.getButton( display, renderer.domElement ))
+//})
+
+//
+// Get the VRDisplay and save it for later.
+var vrDisplay = null;
+navigator.getVRDisplays().then(function(displays) {
+  if (displays.length > 0) {
+    vrDisplay = displays[0];
+
+    // Kick off the render loop.
+    vrDisplay.requestAnimationFrame(animate);
+  }
+});
+
+
+//  Should things change in the future we’ve got you covered:
+
+function onWindowResize(){
+
+	camera.aspect = window.innerWidth / window.innerHeight
+	camera.updateProjectionMatrix()
+	renderer.setSize( window.innerWidth, window.innerHeight )
+}
+window.addEventListener( 'resize', onWindowResize, false )
+
+
+
+
+//  Ok, we’ve got the basic Three.js overhead out of the way.
+//  Now let’s add some stuff to our empty scene.
+
+var torus = new THREE.Mesh(
+
+	new THREE.TorusKnotGeometry( 0.4, 0.15, 150, 20 ),
+	new THREE.MeshStandardMaterial({ roughness: 0.01, metalness: 0.2 })
+)
+torus.position.set( -0.25, 1.4, -1.5 )
+scene.add( torus )
+
+var floor = new THREE.Mesh(
+
+	new THREE.BoxGeometry( 6, 0.2, 6, 6, 1, 6 ),
+	new THREE.MeshStandardMaterial({
+
+		roughness: 1.0,
+		metalness: 0.0,
+		color: 0x909090,
+		wireframe: true
+	})
+)
+floor.position.y = -0.1
+scene.add( floor )
+
+var light = new THREE.DirectionalLight()
+light.position.set(  1, 1.5, -0.5 )
+scene.add( light )
+
+scene.add( new THREE.HemisphereLight( 0x909090, 0x404040 ))
+
+// bkl testing txt 
+//	var shapes, geom, mat, mesh;
+	FontUtils.loadFace(helvetiker_regular);
+	var shapes = THREE.FontUtils.generateShapes( "Hello world" );
+	var geom = new THREE.ShapeGeometry( shapes );
+	var mat = new THREE.MeshBasicMaterial();
+	var mesh = new THREE.Mesh( geom, mat );
+	mesh.position.set( -0.25, 0, -1.5 )
+	scene.add( mesh );
+
+
+//  DAT GUI for WebVR is just one of the coolest things ever.
+//  Huge, huge thanks to Jeff Nusz / http://custom-logic.com
+//  and Michael Chang / http://minmax.design for making this!!
+//  https://github.com/dataarts/dat.guiVR
+
+//dat.GUIVR.enableMouse( camera )
+//var gui = dat.GUIVR.create( 'Settings' )
+//gui.position.set( 0.2, 0.8, -1 )
+//gui.rotation.set( Math.PI / -6, 0, 0 )
+//scene.add( gui )
+//gui.add( torus.position, 'x', -1, 1 ).step( 0.001 ).name( 'Position X' )
+//gui.add( torus.position, 'y', -1, 2 ).step( 0.001 ).name( 'Position Y' )
+//gui.add( torus.rotation, 'y', -Math.PI, Math.PI ).step( 0.001 ).name( 'Rotation' ).listen()
+
+
+
+
+//  Check this out: When THREE.VRController finds a new controller
+//  it will emit a custom “vr controller connected” event on the
+//  global window object. It uses this to pass you the controller
+//  instance and from there you do what you want with it.
+
+window.addEventListener( 'vr controller connected', function( event ){
+
+
+	//  Here it is, your VR controller instance.
+	//  It’s really a THREE.Object3D so you can just add it to your scene:
+
+	var controller = event.detail
+	scene.add( controller )
+
+
+	//  HEY HEY HEY! This is important. You need to make sure you do this.
+	//  For standing experiences (not seated) we need to set the standingMatrix
+	//  otherwise you’ll wonder why your controller appears on the floor
+	//  instead of in your hands! And for seated experiences this will have no
+	//  effect, so safe to do either way:
+
+//	controller.standingMatrix = renderer.vr.getStandingMatrix()
+
+
+	//  And for 3DOF (seated) controllers you need to set the controller.head
+	//  to reference your camera. That way we can make an educated guess where
+	//  your hand ought to appear based on the camera’s rotation.
+
+	controller.head = window.camera
+
+
+	//  Right now your controller has no visual.
+	//  It’s just an empty THREE.Object3D.
+	//  Let’s fix that!
+
+	var
+	meshColorOff = 0xFF4040,
+	meshColorOn  = 0xFFFF00,
+	controllerMaterial = new THREE.MeshStandardMaterial({
+
+		color: meshColorOff
+	}),
+	controllerMesh = new THREE.Mesh(
+
+		new THREE.CylinderGeometry( 0.005, 0.05, 0.1, 6 ),
+		controllerMaterial
+	),
+	handleMesh = new THREE.Mesh(
+
+		new THREE.BoxGeometry( 0.03, 0.1, 0.03 ),
+		controllerMaterial
+	)
+
+	controllerMaterial.flatShading = true
+	controllerMesh.rotation.x = -Math.PI / 2
+	handleMesh.position.y = -0.05
+	controllerMesh.add( handleMesh )
+	controller.userData.mesh = controllerMesh//  So we can change the color later.
+	controller.add( controllerMesh )
+
+
+	//  Allow this controller to interact with DAT GUI.
+
+//	var guiInputHelper = dat.GUIVR.addInputObject( controller )
+//	scene.add( guiInputHelper )
+
+
+	//  Button events. How easy is this?!
+	//  We’ll just use the “primary” button -- whatever that might be ;)
+	//  Check out the THREE.VRController.supported{} object to see
+	//  all the named buttons we’ve already mapped for you!
+
+	controller.addEventListener( 'primary press began', function( event ){
+
+		event.target.userData.mesh.material.color.setHex( meshColorOn )
+//		guiInputHelper.pressed( true )
+	})
+	controller.addEventListener( 'primary press ended', function( event ){
+
+		event.target.userData.mesh.material.color.setHex( meshColorOff )
+//		guiInputHelper.pressed( false )
+	})
+
+
+	//  Daddy, what happens when we die?
+
+	controller.addEventListener( 'disconnected', function( event ){
+
+		controller.parent.remove( controller )
+	})
+})
+
+
+/*
+
+function update(){
+
+
+	//  Here’s VRController’s UPDATE goods right here:
+	//  This one command in your animation loop is going to handle
+	//  all the VR controller business you need to get done!
+
+	THREE.VRController.update()
+
+
+	//  And here’s your standard update and render stuff.
+	//  Nothing new to see here.
+
+	torus.rotation.y += 0.002
+	if( torus.rotation.y > Math.PI ) torus.rotation.y -= ( Math.PI * 2 )//  Keep DAT GUI display tidy!
+	renderer.render( scene, camera )
+}
+renderer.animate( update )
+*/
+
+//
+// Request animation frame loop function
+var lastRender = 0;
+function animate(timestamp) {
+  var delta = Math.min(timestamp - lastRender, 500);
+  lastRender = timestamp;
+
+	THREE.VRController.update()
+
+
+	//  And here’s your standard update and render stuff.
+	//  Nothing new to see here.
+
+	torus.rotation.y += 0.002
+	if( torus.rotation.y > Math.PI ) torus.rotation.y -= ( Math.PI * 2 )//  Keep DAT GUI display tidy!
+
+
+  // Update VR headset position and apply to camera.
+  controls.update();
+
+  // Render the scene.
+  effect.render(scene, camera);
+
+  // Keep looping.
+  vrDisplay.requestAnimationFrame(animate);
+}
+//
+
+
+
+function onResize() {
+  console.log('Resizing to %s x %s.', window.innerWidth, window.innerHeight);
+  effect.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+}
+
+function onVRDisplayPresentChange() {
+  console.log('onVRDisplayPresentChange');
+  onResize();
+}
+
+// Resize the WebGL canvas when we resize and also when we change modes.
+window.addEventListener('resize', onResize);
+window.addEventListener('vrdisplaypresentchange', onVRDisplayPresentChange);
+
+// Button click handlers.
+document.querySelector('button#fullscreen').addEventListener('click', function() {
+  enterFullscreen(renderer.domElement);
+});
+document.querySelector('button#vr').addEventListener('click', function() {
+  vrDisplay.requestPresent([{source: renderer.domElement}]);
+});
+document.querySelector('button#reset').addEventListener('click', function() {
+  vrDisplay.resetPose();
+});
+
+function enterFullscreen (el) {
+  if (el.requestFullscreen) {
+    el.requestFullscreen();
+  } else if (el.mozRequestFullScreen) {
+    el.mozRequestFullScreen();
+  } else if (el.webkitRequestFullscreen) {
+    el.webkitRequestFullscreen();
+  } else if (el.msRequestFullscreen) {
+    el.msRequestFullscreen();
+  }
+}
+
+		</script>
+	</body>
+</html>
