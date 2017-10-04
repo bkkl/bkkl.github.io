@@ -24,6 +24,7 @@ var wildcard = 0;
 var z_start = 550; 
 var font_size = 10;
 var font_size_key = 50;
+var ptextMaterial = new THREE.MeshPhongMaterial( { color: 0xeeeeee, reflectivity: 0xffffff, shininess: 100} );
 // BKL load fonts and preload master letter and 
 
 //    var abc = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -1316,8 +1317,41 @@ var font_size_key = 50;
 		Tetris.text_key_Z.position.z = z_start;
 		Tetris.text_key_Z.castShadow = false;
 		Tetris.text_key_Z.receiveShadow = false;		
+//  adding text handles for a score GUI
+		var textGeo = new THREE.TextGeometry('POINTS:', {
+			font: font,
+			size: 10, // font size
+			height: 1, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+//		textGeo.computeBoundingBox();
+		Tetris.text_score = new THREE.Mesh( textGeo, ptextMaterial );
+		Tetris.text_score.position.x = -100;
+		Tetris.text_score.position.y = -100;
+		Tetris.text_score.position.z = -200;
+		Tetris.text_score.castShadow = false;
+		Tetris.text_score.receiveShadow = false;
 
-
+// current points		
+		var textGeo = new THREE.TextGeometry(Tetris.currentPoints, {
+			font: font,
+			size: 10, // font size
+			height: 1, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+//		textGeo.computeBoundingBox();
+		Tetris.text_points = new THREE.Mesh( textGeo, ptextMaterial );
+		Tetris.text_points.position.x = 0;
+		Tetris.text_points.position.y = -100;
+		Tetris.text_points.position.z = -200;
+		Tetris.text_points.castShadow = false;
+		Tetris.text_points.receiveShadow = false;
 		
 	});
 
@@ -1430,7 +1464,13 @@ Tetris.init = function () {
 
     // attach the render-supplied DOM element
     document.body.appendChild(Tetris.renderer.domElement);
-		
+	//BKL - add controller 
+//	Tetris.vrcontroler = new THREE.VRController(Tetris.camera);
+	
+	// add headset postion control
+	// Apply VR headset positional data to camera.
+	Tetris.controls = new THREE.VRControls(Tetris.camera);
+
     // configuration object
     var boundingBoxConfig = {
         width:1440,
@@ -1584,15 +1624,42 @@ Tetris.start = function () {
 //	Tetris.scene.add(Tetris.cubeoutline2); 
     //// add text to cube of TextGeometry
 	Tetris.text_key.position.x = 25;
-	Tetris.text_key.position.z = 200;
+	Tetris.text_key.position.z = -150;
 	Tetris.text_active.position.x = -25;
 	Tetris.text_active.position.z = -1400;
 //	Tetris.cube2.position.x = -200;
 	Tetris.scene.add(Tetris.text_key);  
 	Tetris.scene.add(Tetris.text_active);
+	Tetris.scene.add(Tetris.text_score);
+	Tetris.scene.add(Tetris.text_points);
 	Tetris.text_active.visible = true;
 
 // End TextGeometry
+
+	//  DAT GUI for WebVR is just one of the coolest things ever.
+	//  Huge, huge thanks to Jeff Nusz / http://custom-logic.com
+	//  and Michael Chang / http://minmax.design for making this!!
+	//  https://github.com/dataarts/dat.guiVR
+
+//	dat.GUIVR.enableMouse( camera )
+//	var gui = dat.GUIVR.create();
+	
+//  gui.autoPlace = true; 
+//	gui.width = 600; 
+//	gui.position.set( 0, 5, -11.5);
+//	gui.rotation.set( 0, 0, 0 );
+//	gui.scale.set(6.5,6.5,6.5);
+//	Tetris.scene.add( gui );
+//	Tetris.currentPoints = 9999;
+//	gui.add(Tetris.currentPoints, 'y', 0, 10000 ).step( 100 ).name( 'Score' )
+//	gui.add(params, 'StartingVector').name('Starting Vector : ');
+//	gui.add( Tetris.cube2.position, 'x', -100, 100 ).step( 10 ).name( Tetris.text_active.position.x )
+//	gui.add( Tetris.cube2.position, 'y', -100, 100 ).step( 10 ).name( 'Position y' )
+//	gui.add( torus.position, 'y', -1, 2 ).step( 0.001 ).name( 'Position Y' )
+//	gui.add( torus.rotation, 'y', -Math.PI, Math.PI ).step( 0.001 ).name( 'Rotation' ).listen()
+//  BKL - lets try again
+
+	
 	//BKL 
 	// Apply VR stereo rendering to renderer.
 	Tetris.effect = new THREE.VREffect(Tetris.renderer);
@@ -1627,6 +1694,12 @@ Tetris.animate = function () {
     Tetris.frameTime = time - Tetris._lastFrameTime;
     Tetris._lastFrameTime = time;
     Tetris.cumulatedFrameTime += Tetris.frameTime;
+// Adding headset postion control 	
+	Tetris.controls.update();
+// BKL adding input from controller
+	THREE.VRController.update()	
+//	Tetris.controller.update();
+	
 // adding progressive effect for new blocks 	
 /*
 	if (CurrentBlockOpacity <1){
@@ -1647,7 +1720,7 @@ Tetris.animate = function () {
         Tetris.cumulatedFrameTime -= Tetris.gameStepTime;
 
 // Get new random letter when Z gets too close to player
-	if (Tetris.text_active.position.z > 400) {
+	if (Tetris.text_active.position.z > 300) {
 			Tetris.text_active.visible = false;
 			if (Math.abs(key_letter-current_letter) < 5){
 				current_letter=key_letter; 
@@ -1659,7 +1732,15 @@ Tetris.animate = function () {
 			Tetris.text_active.position.x = -25;
 			Tetris.text_active.position.z = -1400;
 			Tetris.scene.add(Tetris.text_active);
-			Tetris.text_active.visible = true;		
+			Tetris.text_active.visible = true;	
+			// bkl add random level 
+			if (Tetris.currentPoints > 150) {
+//					Tetris.text_active.position.x = -250;
+//					Tetris.text_active.position.y = -250;
+					Tetris.text_active.position.x = -Math.floor(Math.random() * (300));
+					Tetris.text_active.position.y = Math.floor(Math.random() * (300));
+					Tetris.text_active.position.z = -1400;
+			}
 	}
 	
     switch (level) {
@@ -1728,7 +1809,43 @@ Tetris.animate = function () {
 //	refresh_letter();
 //	Tetris.scene.add(Tetris.cube1);
 //	Tetris.scene.add(Tetris.text_active[0]);
-	Tetris.text_active.position.z = Tetris.text_active.position.z +10;
+	
+	if (Tetris.text_active.position.z > -400){
+	    Tetris.text_active.position.z = Tetris.text_active.position.z +4;
+				if (Tetris.text_active.position.y > 0){
+					Tetris.text_active.position.y = Tetris.text_active.position.y -1;
+				}
+				if (Tetris.text_active.position.y < -0){
+					Tetris.text_active.position.y = Tetris.text_active.position.y +1;
+				}
+				if (Tetris.text_active.position.x > 10){
+					Tetris.text_active.position.x = Tetris.text_active.position.x -1;
+				}
+				if (Tetris.text_active.position.x < -25){
+					Tetris.text_active.position.x = Tetris.text_active.position.x +1;
+				}	
+		
+	}
+	else{
+		Tetris.text_active.position.z = Tetris.text_active.position.z +13;
+		
+				if (Tetris.text_active.position.y > 0){
+					Tetris.text_active.position.y = Tetris.text_active.position.y -3;
+				}
+				if (Tetris.text_active.position.y < -0){
+					Tetris.text_active.position.y = Tetris.text_active.position.y +3;
+				}
+				if (Tetris.text_active.position.x > 10){
+					Tetris.text_active.position.x = Tetris.text_active.position.x -3;
+				}
+				if (Tetris.text_active.position.x < -25){
+					Tetris.text_active.position.x = Tetris.text_active.position.x +3;
+				}		
+	}
+	
+
+	
+	
 //	Tetris.effect.render(scene, camera);
 //	Tetris.cube1.rotation.y += Tetris.frameTime * .0006;
 //	Tetris.cube1.rotation.x += Tetris.frameTime * .0006;
@@ -1975,7 +2092,99 @@ function onVRDisplayPresentChange() {
 window.addEventListener('resize', onResize);
 window.addEventListener('vrdisplaypresentchange', onVRDisplayPresentChange);
 
+// BKL - controller input 
+//  Check this out: When THREE.VRController finds a new controller
+//  it will emit a custom “vr controller connected” event on the
+//  global window object. It uses this to pass you the controller
+//  instance and from there you do what you want with it.
 
+window.addEventListener( 'vr controller connected', function( event ){
+
+	//  Here it is, your VR controller instance.
+	//  It’s really a THREE.Object3D so you can just add it to your scene:
+	Tetris.controller = new THREE.VRController()
+	Tetris.controller = event.detail
+	Tetris.scene.add( Tetris.controller )
+
+	//  HEY HEY HEY! This is important. You need to make sure you do this.
+	//  For standing experiences (not seated) we need to set the standingMatrix
+	//  otherwise you’ll wonder why your controller appears on the floor
+	//  instead of in your hands! And for seated experiences this will have no
+	//  effect, so safe to do either way:
+
+//	controller.standingMatrix = renderer.vr.getStandingMatrix()
+
+
+	//  And for 3DOF (seated) controllers you need to set the controller.head
+	//  to reference your camera. That way we can make an educated guess where
+	//  your hand ought to appear based on the camera’s rotation.
+
+	Tetris.controller.head = Tetris.camera
+
+
+	//  Right now your controller has no visual.
+	//  It’s just an empty THREE.Object3D.
+	//  Let’s fix that!
+
+	var
+	meshColorOff = 0xFF4040,
+	meshColorOn  = 0xFFFF00,
+	controllerMaterial = new THREE.MeshStandardMaterial({
+
+		color: meshColorOff
+	}),
+	controllerMesh = new THREE.Mesh(
+
+		new THREE.CylinderGeometry( 0.005, 0.05, 0.1, 6 ),
+		controllerMaterial
+	),
+	handleMesh = new THREE.Mesh(
+
+		new THREE.BoxGeometry( 0.03, 0.1, 0.03 ),
+		controllerMaterial
+	)
+
+	controllerMaterial.flatShading = true
+	controllerMesh.rotation.x = -Math.PI / 2
+	handleMesh.position.y = -0.05
+	controllerMesh.add( handleMesh )
+	Tetris.controller.userData.mesh = controllerMesh//  So we can change the color later.
+	Tetris.controller.add( controllerMesh )
+
+
+	//  Allow this controller to interact with DAT GUI.
+
+//	var guiInputHelper = dat.GUIVR.addInputObject( controller )
+//	scene.add( guiInputHelper )
+
+
+	//  Button events. How easy is this?!
+	//  We’ll just use the “primary” button -- whatever that might be ;)
+	//  Check out the THREE.VRController.supported{} object to see
+	//  all the named buttons we’ve already mapped for you!
+
+	Tetris.controller.addEventListener( 'primary press began', function( event ){
+
+		event.target.userData.mesh.material.color.setHex( meshColorOn )
+//		Tetris.sounds["gameover"].play();
+//		guiInputHelper.pressed( true )
+	})
+	Tetris.controller.addEventListener( 'primary press ended', function( event ){
+		event.target.userData.mesh.material.color.setHex( meshColorOff )
+//		Tetris.sounds["gameover"].play();
+//		guiInputHelper.pressed( false )
+	})
+
+
+	//  Daddy, what happens when we die?
+
+	Tetris.controller.addEventListener( 'disconnected', function( event ){
+
+		Tetris.controller.parent.remove( Tetris.controller )
+	})
+})
+
+// end BLK controller input 
 
 // nice test:
 // var i = 0, j = 0, k = 0, interval = setInterval(function() {if(i==6) {i=0;j++;} if(j==6) {j=0;k++;} if(k==6) {clearInterval(interval); return;} Tetris.addStaticBlock(i,j,k); i++;},30)
@@ -2007,13 +2216,88 @@ Tetris.addPoints = function (n) {
     
 	Tetris.pointsDOM.innerHTML = Tetris.currentPoints; 
     Cufon.replace('#points');
-    Tetris.sounds["score"].play();
+//    Tetris.sounds["score"].play();
+	// update score in 3D BKL
+	// current points		
+//		Tetris.text_points.visible = false;
+		Tetris.scene.remove(Tetris.text_points);
+//		Tetris.text_points.mesh.geometry.dispose();
+		 //, mesh.material.dispose() and mesh.texture.dispose()
+		loader.load('fonts/helvetiker_bold.typeface.json', function ( font ) {
+		var ptextGeo = new THREE.TextGeometry(Tetris.currentPoints, {
+			font: font,
+			size: 10, // font size
+			height: 1, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 12,
+			bevelThickness: 1,
+			bevelSize: 1,
+			bevelEnabled: false
+		});
+//		textGeo.computeBoundingBox();
+
+/* 		Tetris.text_points = new THREE.Mesh( ptextGeo, ptextMaterial );
+		Tetris.text_points.position.x = 0;
+		Tetris.text_points.position.y = -200;
+		Tetris.text_points.position.z = -200;
+		Tetris.text_points.castShadow = false;
+		Tetris.text_points.receiveShadow = false; */
+	
+		Tetris.text_points_temp = new THREE.Mesh( ptextGeo, ptextMaterial );
+		Tetris.text_points_temp.position.x = 0;
+		Tetris.text_points_temp.position.y = -100;
+		Tetris.text_points_temp.position.z = -200;
+		Tetris.text_points_temp.castShadow = false;
+		Tetris.text_points_temp.receiveShadow = false;
+		})
+		Tetris.text_points = Tetris.text_points_temp;
+		Tetris.scene.add(Tetris.text_points_temp);
+//		Tetris.text_points.visible = true;	
+/*         Tetris.text_points.matrixWorldNeedsUpdate = true;
+		Tetris.text_points.geometry.elementsNeedUpdate = true;
+		Tetris.text_points.geometry.normalsNeedUpdate = true;
+		Tetris.text_points.geometry.groupsNeedUpdate = true;
+		Tetris.text_points.matrixAutoUpdate  = true;
+		Tetris.text_points.updateMatrix(); */
+	
+	
 };
 
 	
 
 
 window.addEventListener("load", Tetris.init);
+
+window.addEventListener('click', function (event) {
+	 //Tetris.Block.move(1, 0, 0);
+			if (key_letter != current_letter){
+				Tetris.addPoints(10);
+				Tetris.sounds["score"].play();
+			    if (Math.abs(key_letter-current_letter) < 10){
+				current_letter=key_letter; 
+			    }
+				else {current_letter = rand_num();
+				}
+			}
+			else {current_letter = rand_num();
+				Tetris.addPoints(-50);
+				Tetris.sounds["collision"].play();
+			}
+			Tetris.text_active.visible = false;
+			rand_set_active(current_letter);
+			Tetris.text_active.position.x = -10;
+			Tetris.text_active.position.z = -1400;
+			
+			Tetris.scene.add(Tetris.text_active);
+			Tetris.text_active.visible = true;	
+			// bkl add random level 
+			if (Tetris.currentPoints > 150) {
+//					Tetris.text_active.position.x = -250;
+//					Tetris.text_active.position.y = -250;
+					Tetris.text_active.position.x = -Math.floor(Math.random() * (300));
+					Tetris.text_active.position.y = Math.floor(Math.random() * (300));
+					Tetris.text_active.position.z = -1400;
+			}
+})
 
 window.addEventListener('keydown', function (event) {
     var key = event.which ? event.which : event.keyCode;
@@ -2032,8 +2316,10 @@ window.addEventListener('keydown', function (event) {
             break;
         case 76: // right (l)
             //Tetris.Block.move(1, 0, 0);
+	 //Tetris.Block.move(1, 0, 0);
 			if (key_letter != current_letter){
 				Tetris.addPoints(10);
+				Tetris.sounds["score"].play();
 			    if (Math.abs(key_letter-current_letter) < 10){
 				current_letter=key_letter; 
 			    }
@@ -2041,13 +2327,24 @@ window.addEventListener('keydown', function (event) {
 				}
 			}
 			else {current_letter = rand_num();
+				Tetris.addPoints(-50);
+				Tetris.sounds["collision"].play();
 			}
 			Tetris.text_active.visible = false;
 			rand_set_active(current_letter);
 			Tetris.text_active.position.x = -10;
 			Tetris.text_active.position.z = -1400;
+			
 			Tetris.scene.add(Tetris.text_active);
 			Tetris.text_active.visible = true;	
+			// bkl add random level 
+			if (Tetris.currentPoints > 150) {
+//					Tetris.text_active.position.x = -250;
+//					Tetris.text_active.position.y = -250;
+					Tetris.text_active.position.x = -Math.floor(Math.random() * (300));
+					Tetris.text_active.position.y = Math.floor(Math.random() * (300));
+					Tetris.text_active.position.z = -1400;
+			}
 					
             break;
 			
@@ -2059,7 +2356,7 @@ window.addEventListener('keydown', function (event) {
 				key_letter = rand_num();
 				rand_set_key(key_letter);
 				Tetris.text_key.position.x = 25;
-				Tetris.text_key.position.z = 200;
+				Tetris.text_key.position.z = -150;
 				Tetris.scene.add(Tetris.text_key);
 				Tetris.text_key.visible = true;
 
@@ -2068,15 +2365,29 @@ window.addEventListener('keydown', function (event) {
 				current_letter = rand_num();
 				rand_set_active(current_letter);
 				Tetris.text_active.position.x = -25;
-				Tetris.text_active.position.z = -1400;
+				Tetris.text_active.position.z = -1400;	
+				
 				Tetris.scene.add(Tetris.text_active);
 				Tetris.text_active.visible = true;
 				// scoring update
 				Tetris.addPoints(100);
+				Tetris.sounds["score"].play();
+				// bkl add random level 
+				if (Tetris.currentPoints > 150) {
+//						Tetris.text_active.position.x = -250
+//						Tetris.text_active.position.y = 250
+						Tetris.text_active.position.x = -Math.floor(Math.random() * (300));
+						Tetris.text_active.position.y = Math.floor(Math.random() * (300));
+						Tetris.text_active.position.z = -1400;
+				}
 
 			}
 			else {
-			Tetris.sounds["gameover"].play();	
+//			Tetris.sounds["collision"] = document.getElementById("audio_collision"); 	
+//			    Tetris.sounds["move"] = document.getElementById("audio_move");  
+				Tetris.addPoints(-50);
+				Tetris.sounds["collision"].play();
+				
 			}
             break;
 
