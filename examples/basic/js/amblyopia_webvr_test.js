@@ -12,8 +12,17 @@ if (!window.requestAnimationFrame) {
 
 window.Tetris = window.Tetris || {};
 Tetris.sounds = {};
-//BKL used to control left eye / right eye layers. (0 = both, 1=left, 2=right)
-var VR_layers = 0;
+//BKL used to control left eye / right eye layers. (0 = both, 1=left (default), 2=right)
+var VR_layers = 1;
+
+var VR_letter_x_start_position_ref = 30;
+var VR_letter_x_start_position = VR_letter_x_start_position_ref;
+// swaps letter position in left (1) / right (-1) based on VR_layers 
+var VR_letter_x_start_side = 1;
+
+var VR_active_rnd_x_start = 300;
+var VR_active_rnd_y_start = 600;
+var VR_step_time = 70;
 // BKL used to create easy level 
 var level = 0;
 var CurrentBlockOpacity = 1;
@@ -25,6 +34,8 @@ var z_start = 550;
 var font_size = 10;
 var font_size_key = 50;
 var ptextMaterial = new THREE.MeshPhongMaterial( { color: 0xeeeeee, reflectivity: 0xffffff, shininess: 100} );
+
+
 // BKL load fonts and preload master letter and 
 
 //    var abc = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -1350,6 +1361,7 @@ var ptextMaterial = new THREE.MeshPhongMaterial( { color: 0xeeeeee, reflectivity
 		Tetris.text_points.position.x = 0;
 		Tetris.text_points.position.y = -100;
 		Tetris.text_points.position.z = -200;
+		Tetris.text_points.layers.set(VR_layers);
 		Tetris.text_points.castShadow = false;
 		Tetris.text_points.receiveShadow = false;
 		
@@ -1623,9 +1635,10 @@ Tetris.start = function () {
 //	Tetris.scene.add(Tetris.cube2);
 //	Tetris.scene.add(Tetris.cubeoutline2); 
     //// add text to cube of TextGeometry
-	Tetris.text_key.position.x = 25;
+	Tetris.text_key.position.x = (VR_letter_x_start_side*VR_letter_x_start_position);
 	Tetris.text_key.position.z = -150;
-	Tetris.text_active.position.x = -25;
+	Tetris.text_active.position.x = (VR_letter_x_start_side*-VR_letter_x_start_position);
+//   Tetris.text_active.position.x = (-VR_letter_x_start_position);
 	Tetris.text_active.position.z = -1400;
 //	Tetris.cube2.position.x = -200;
 	Tetris.scene.add(Tetris.text_key);  
@@ -1636,28 +1649,6 @@ Tetris.start = function () {
 
 // End TextGeometry
 
-	//  DAT GUI for WebVR is just one of the coolest things ever.
-	//  Huge, huge thanks to Jeff Nusz / http://custom-logic.com
-	//  and Michael Chang / http://minmax.design for making this!!
-	//  https://github.com/dataarts/dat.guiVR
-
-//	dat.GUIVR.enableMouse( camera )
-//	var gui = dat.GUIVR.create();
-	
-//  gui.autoPlace = true; 
-//	gui.width = 600; 
-//	gui.position.set( 0, 5, -11.5);
-//	gui.rotation.set( 0, 0, 0 );
-//	gui.scale.set(6.5,6.5,6.5);
-//	Tetris.scene.add( gui );
-//	Tetris.currentPoints = 9999;
-//	gui.add(Tetris.currentPoints, 'y', 0, 10000 ).step( 100 ).name( 'Score' )
-//	gui.add(params, 'StartingVector').name('Starting Vector : ');
-//	gui.add( Tetris.cube2.position, 'x', -100, 100 ).step( 10 ).name( Tetris.text_active.position.x )
-//	gui.add( Tetris.cube2.position, 'y', -100, 100 ).step( 10 ).name( 'Position y' )
-//	gui.add( torus.position, 'y', -1, 2 ).step( 0.001 ).name( 'Position Y' )
-//	gui.add( torus.rotation, 'y', -Math.PI, Math.PI ).step( 0.001 ).name( 'Rotation' ).listen()
-//  BKL - lets try again
 
 	
 	//BKL 
@@ -1681,7 +1672,7 @@ Tetris.start = function () {
 };
 
 
-Tetris.gameStepTime = 70;
+Tetris.gameStepTime = VR_step_time;
 
 Tetris.frameTime = 0; // ms
 Tetris.cumulatedFrameTime = 0; // ms
@@ -1690,6 +1681,7 @@ Tetris._lastFrameTime = Date.now(); // timestamp
 Tetris.gameOver = false;
 
 Tetris.animate = function () {
+	Tetris.gameStepTime = VR_step_time;
     var time = Date.now();
     Tetris.frameTime = time - Tetris._lastFrameTime;
     Tetris._lastFrameTime = time;
@@ -1700,21 +1692,6 @@ Tetris.animate = function () {
 	THREE.VRController.update()	
 //	Tetris.controller.update();
 	
-// adding progressive effect for new blocks 	
-/*
-	if (CurrentBlockOpacity <1){
-		 CurrentBlockOpacity = CurrentBlockOpacity+0.005;
-			if (CurrentBlockOpacity > 0.3){
-			    CurrentBlockOpacity = 1;
-				CurrentBlockWireFrame = true;
-				Tetris.Block.mesh.children["0"].material.wireframe = true;
-			}	
-		Tetris.Block.mesh.children["0"].material.opacity = CurrentBlockOpacity;
-		Tetris.Block.mesh.children["1"].material.opacity = CurrentBlockOpacity;
-	}
-*/	
-//		Tetris.Block.mesh.children["0"].material.opacity = CurrentBlockOpacity;
-//		Tetris.Block.mesh.children["1"].material.opacity = CurrentBlockOpacity;
 
     while (Tetris.cumulatedFrameTime > Tetris.gameStepTime) {
         Tetris.cumulatedFrameTime -= Tetris.gameStepTime;
@@ -1729,86 +1706,19 @@ Tetris.animate = function () {
 				}
 			current_letter = rand_num();
 			rand_set_active(current_letter);
-			Tetris.text_active.position.x = -25;
+			Tetris.text_active.position.x = (VR_letter_x_start_side*-VR_letter_x_start_position);
+//			Tetris.text_active.position.x = (-VR_letter_x_start_position);
 			Tetris.text_active.position.z = -1400;
 			Tetris.scene.add(Tetris.text_active);
 			Tetris.text_active.visible = true;	
 			// bkl add random level 
 			if (Tetris.currentPoints > 150) {
-//					Tetris.text_active.position.x = -250;
-//					Tetris.text_active.position.y = -250;
-					Tetris.text_active.position.x = -Math.floor(Math.random() * (300));
-					Tetris.text_active.position.y = Math.floor(Math.random() * (300));
-					Tetris.text_active.position.z = -1400;
+				Tetris.text_active.position.x = (VR_letter_x_start_side*-Math.floor(Math.random() * (VR_active_rnd_x_start)));
+				Tetris.text_active.position.y = (Math.floor(Math.random()*VR_active_rnd_y_start) - (VR_active_rnd_y_start/2-1));
+				Tetris.text_active.position.z = -1400;
 			}
 	}
-	
-    switch (level) {
-        //case
-		// BKL changed from arrows to use BT keyboard with phone
-        case 1: //move
-			Tetris.text_key.visible = false;
-//			Tetris.scene.remove(Tetris.text_key);
-			Tetris.cube1.layers.set(0);
-			Tetris.cube2.layers.set(VR_layers);
-			if (Tetris.cube1.position.x < 140){
-			Tetris.text_key.position.x = Tetris.text_key.position.x +3;
-//			Tetris.text_active[0].position.x = Tetris.text_active[0].position.x -3;
-			Tetris.cube1.position.x = Tetris.cube1.position.x +4;
-			Tetris.cube2.position.x = Tetris.cube2.position.x -4;
-			Tetris.cube1.position.z = Tetris.cube1.position.z -3;
-			Tetris.cube2.position.z = Tetris.cube2.position.z -3;
-			Tetris.text_key.position.z = Tetris.text_key.position.z -3;
-//			Tetris.text_active[0].position.z = Tetris.text_active[0].position.z -3;
-			} 
-			else {
-				Tetris.cube1.rotation.y += Tetris.frameTime * .0006;
-				Tetris.cube1.rotation.x += Tetris.frameTime * .0006;
-				Tetris.cube2.rotation.y += -Tetris.frameTime * .0006;
-				Tetris.cube2.rotation.x += -Tetris.frameTime * .0006;
-			}
-			
-            break;
-		case 2: //freeze and show letter
-			Tetris.text_key.visible = true;
-//			Tetris.text_active[0].layers.set(VR_layers);
-			Tetris.cube2.layers.set(VR_layers);
-//			Tetris.text_active[0].visible = true;
-			Tetris.cube1.rotation.y = 0;
-			Tetris.cube1.rotation.x = 0;
-			Tetris.cube1.rotation.z = 0;
-			Tetris.cube2.rotation.y = 0;
-			Tetris.cube2.rotation.x = 0;
-			Tetris.cube2.rotation.z = 0;
-//			refresh_letter();
-			Tetris.text_key.needsUpdate = true;
-//			Tetris.scene.add(Tetris.text_key);
-						
-            break;	
-		case 3: //start game
-//			Tetris.text_active[0].layers.set(VR_layers);
-			Tetris.cube2.layers.set(VR_layers);
-						
-			
-			Tetris.text_key.needsUpdate = true;			
-            break;	
-		case 4: //start game
-//			Tetris.text_active[0].layers.set(VR_layers);
-			Tetris.cube2.layers.set(VR_layers);
-//			refresh_letter();
-						
-            break;	
-		
-	}			
 
-//        Tetris.Block.move(0, 0, -0.5);
-//		Tetris.Block.rotate(1, 1, 1);
-//	Tetris.scene.remove(Tetris.text_active[0]);
-//  Tetris.scene.remove(Tetris.cube1);
-//	Tetris.scene.remove(Tetris.text_active[0]);
-//	refresh_letter();
-//	Tetris.scene.add(Tetris.cube1);
-//	Tetris.scene.add(Tetris.text_active[0]);
 	
 	if (Tetris.text_active.position.z > -400){
 	    Tetris.text_active.position.z = Tetris.text_active.position.z +4;
@@ -1818,10 +1728,10 @@ Tetris.animate = function () {
 				if (Tetris.text_active.position.y < -0){
 					Tetris.text_active.position.y = Tetris.text_active.position.y +1;
 				}
-				if (Tetris.text_active.position.x > 10){
+				if (Tetris.text_active.position.x > 5){
 					Tetris.text_active.position.x = Tetris.text_active.position.x -1;
 				}
-				if (Tetris.text_active.position.x < -25){
+				if (Tetris.text_active.position.x < -5){
 					Tetris.text_active.position.x = Tetris.text_active.position.x +1;
 				}	
 		
@@ -1829,37 +1739,24 @@ Tetris.animate = function () {
 	else{
 		Tetris.text_active.position.z = Tetris.text_active.position.z +13;
 		
-				if (Tetris.text_active.position.y > 0){
-					Tetris.text_active.position.y = Tetris.text_active.position.y -3;
+				if (Tetris.text_active.position.y > 2){
+					Tetris.text_active.position.y = Tetris.text_active.position.y -2.5;
 				}
-				if (Tetris.text_active.position.y < -0){
-					Tetris.text_active.position.y = Tetris.text_active.position.y +3;
+				if (Tetris.text_active.position.y < 2){
+					Tetris.text_active.position.y = Tetris.text_active.position.y +2.5;
 				}
-				if (Tetris.text_active.position.x > 10){
-					Tetris.text_active.position.x = Tetris.text_active.position.x -3;
+				if (Tetris.text_active.position.x > 5){
+					Tetris.text_active.position.x = Tetris.text_active.position.x -2.5;
 				}
-				if (Tetris.text_active.position.x < -25){
-					Tetris.text_active.position.x = Tetris.text_active.position.x +3;
+				if (Tetris.text_active.position.x < -5){
+					Tetris.text_active.position.x = Tetris.text_active.position.x +2.5;
 				}		
 	}
 	
-
-	
-	
-//	Tetris.effect.render(scene, camera);
-//	Tetris.cube1.rotation.y += Tetris.frameTime * .0006;
-//	Tetris.cube1.rotation.x += Tetris.frameTime * .0006;
-
-
 		
     }
 	
-//	Tetris.stats.update();
-	 
-//	Tetris.Block.mesh.layers.set(1);
-//    Tetris.renderer.render(Tetris.scene, Tetris.camera);
-	// BKL Render the VR scene.
-//	Tetris.camera.updateProjectionMatrix();
+
 	Tetris.effect.render(Tetris.scene, Tetris.camera);
    
 	// BKL    if (!Tetris.gameOver) window.requestAnimationFrame(Tetris.animate);
@@ -2080,7 +1977,22 @@ function rand_set_active (rand_key_value) {
 				Tetris.text_active = Tetris.text_Z;
 				break;					
 		}	
-		Tetris.text_active.layers.set(1);
+		Tetris.text_active.layers.set(VR_layers);
+ 		if (VR_letter_x_start_side == 1){
+			
+//			if (Tetris.currentPoints < 250) {
+//				VR_letter_x_start_side = 1;
+				VR_letter_x_start_position = VR_letter_x_start_position_ref;
+//			}
+
+		}
+		else {
+//			if (Tetris.currentPoints < 250) {
+//				VR_letter_x_start_side = -1;
+				VR_letter_x_start_position = VR_letter_x_start_position_ref+30;
+//			}
+			
+		} 
 }
 
 function onVRDisplayPresentChange() {
@@ -2219,12 +2131,11 @@ Tetris.addPoints = function (n) {
 //    Tetris.sounds["score"].play();
 	// update score in 3D BKL
 	// current points		
-//		Tetris.text_points.visible = false;
+
 		Tetris.scene.remove(Tetris.text_points);
-//		Tetris.text_points.mesh.geometry.dispose();
-		 //, mesh.material.dispose() and mesh.texture.dispose()
+
 		loader.load('fonts/helvetiker_bold.typeface.json', function ( font ) {
-		var ptextGeo = new THREE.TextGeometry(Tetris.currentPoints, {
+    var ptextGeo = new THREE.TextGeometry(Tetris.currentPoints, {
 			font: font,
 			size: 10, // font size
 			height: 1, // how much extrusion (how thick / deep are the letters)
@@ -2233,14 +2144,7 @@ Tetris.addPoints = function (n) {
 			bevelSize: 1,
 			bevelEnabled: false
 		});
-//		textGeo.computeBoundingBox();
 
-/* 		Tetris.text_points = new THREE.Mesh( ptextGeo, ptextMaterial );
-		Tetris.text_points.position.x = 0;
-		Tetris.text_points.position.y = -200;
-		Tetris.text_points.position.z = -200;
-		Tetris.text_points.castShadow = false;
-		Tetris.text_points.receiveShadow = false; */
 	
 		Tetris.text_points_temp = new THREE.Mesh( ptextGeo, ptextMaterial );
 		Tetris.text_points_temp.position.x = 0;
@@ -2251,13 +2155,26 @@ Tetris.addPoints = function (n) {
 		})
 		Tetris.text_points = Tetris.text_points_temp;
 		Tetris.scene.add(Tetris.text_points_temp);
-//		Tetris.text_points.visible = true;	
-/*         Tetris.text_points.matrixWorldNeedsUpdate = true;
-		Tetris.text_points.geometry.elementsNeedUpdate = true;
-		Tetris.text_points.geometry.normalsNeedUpdate = true;
-		Tetris.text_points.geometry.groupsNeedUpdate = true;
-		Tetris.text_points.matrixAutoUpdate  = true;
-		Tetris.text_points.updateMatrix(); */
+		// shorten step time - game moves faster with higher score
+		switch (true) {
+			case (Tetris.currentPoints >= 500 && Tetris.currentPoints < 1000):
+				VR_step_time = 60;
+				break;
+			case (Tetris.currentPoints >= 1000 && Tetris.currentPoints < 2000):
+				VR_step_time = 55;
+				break;
+			case (Tetris.currentPoints >= 2000 && Tetris.currentPoints < 3000):
+				VR_step_time = 45;
+				break;
+			case (Tetris.currentPoints >= 3000 && Tetris.currentPoints < 4000):
+				VR_step_time = 40;
+				VR_active_rnd_x_start = 500;
+				VR_active_rnd_y_start = 800;
+				
+				break;				
+			default:
+				break;
+		}
 	
 	
 };
@@ -2284,17 +2201,16 @@ window.addEventListener('click', function (event) {
 			}
 			Tetris.text_active.visible = false;
 			rand_set_active(current_letter);
-			Tetris.text_active.position.x = -10;
+			Tetris.text_active.position.x = (-15 * VR_letter_x_start_side);
+//			Tetris.text_active.position.x = -10;
 			Tetris.text_active.position.z = -1400;
 			
 			Tetris.scene.add(Tetris.text_active);
 			Tetris.text_active.visible = true;	
 			// bkl add random level 
 			if (Tetris.currentPoints > 150) {
-//					Tetris.text_active.position.x = -250;
-//					Tetris.text_active.position.y = -250;
-					Tetris.text_active.position.x = -Math.floor(Math.random() * (300));
-					Tetris.text_active.position.y = Math.floor(Math.random() * (300));
+					Tetris.text_active.position.x = (VR_letter_x_start_side*-Math.floor(Math.random() * (VR_active_rnd_x_start)));
+					Tetris.text_active.position.y = (Math.floor(Math.random()*VR_active_rnd_y_start) - (VR_active_rnd_y_start/2-1));
 					Tetris.text_active.position.z = -1400;
 			}
 })
@@ -2332,17 +2248,16 @@ window.addEventListener('keydown', function (event) {
 			}
 			Tetris.text_active.visible = false;
 			rand_set_active(current_letter);
-			Tetris.text_active.position.x = -10;
+			Tetris.text_active.position.x = (VR_letter_x_start_side*-15);
+//			Tetris.text_active.position.x = (-10);
 			Tetris.text_active.position.z = -1400;
 			
 			Tetris.scene.add(Tetris.text_active);
 			Tetris.text_active.visible = true;	
 			// bkl add random level 
 			if (Tetris.currentPoints > 150) {
-//					Tetris.text_active.position.x = -250;
-//					Tetris.text_active.position.y = -250;
-					Tetris.text_active.position.x = -Math.floor(Math.random() * (300));
-					Tetris.text_active.position.y = Math.floor(Math.random() * (300));
+					Tetris.text_active.position.x = (VR_letter_x_start_side*-Math.floor(Math.random() * (VR_active_rnd_x_start)));
+					Tetris.text_active.position.y = (Math.floor(Math.random()*VR_active_rnd_y_start) - (VR_active_rnd_y_start/2-1));
 					Tetris.text_active.position.z = -1400;
 			}
 					
@@ -2352,10 +2267,21 @@ window.addEventListener('keydown', function (event) {
 		
 			if (key_letter == current_letter){	
 			// reset for next round 
+			
+			// swap field of view to make more challenging 
+				if (Tetris.currentPoints > 3000) {
+						VR_letter_x_start_side =  Math.floor(Math.random() * 2 - 1);
+						VR_letter_x_start_position = VR_letter_x_start_position_ref+30;
+						if (VR_letter_x_start_side == 0){
+								VR_letter_x_start_side	= 1
+								VR_letter_x_start_position = VR_letter_x_start_position_ref;
+						}
+				}
+			// 	end field of view swap 
 				Tetris.text_key.visible = false;
 				key_letter = rand_num();
 				rand_set_key(key_letter);
-				Tetris.text_key.position.x = 25;
+				Tetris.text_key.position.x = (VR_letter_x_start_side*VR_letter_x_start_position);
 				Tetris.text_key.position.z = -150;
 				Tetris.scene.add(Tetris.text_key);
 				Tetris.text_key.visible = true;
@@ -2364,7 +2290,8 @@ window.addEventListener('keydown', function (event) {
 				Tetris.text_active.visible = false;
 				current_letter = rand_num();
 				rand_set_active(current_letter);
-				Tetris.text_active.position.x = -25;
+				Tetris.text_active.position.x = (VR_letter_x_start_side*-VR_letter_x_start_position);
+//				Tetris.text_active.position.x = (-VR_letter_x_start_position);
 				Tetris.text_active.position.z = -1400;	
 				
 				Tetris.scene.add(Tetris.text_active);
@@ -2374,17 +2301,17 @@ window.addEventListener('keydown', function (event) {
 				Tetris.sounds["score"].play();
 				// bkl add random level 
 				if (Tetris.currentPoints > 150) {
-//						Tetris.text_active.position.x = -250
-//						Tetris.text_active.position.y = 250
-						Tetris.text_active.position.x = -Math.floor(Math.random() * (300));
-						Tetris.text_active.position.y = Math.floor(Math.random() * (300));
-						Tetris.text_active.position.z = -1400;
+						Tetris.text_active.position.x = (VR_letter_x_start_side*-Math.floor(Math.random() * (VR_active_rnd_x_start)));
+						Tetris.text_active.position.y = (Math.floor(Math.random()*VR_active_rnd_y_start) - (VR_active_rnd_y_start/2-1));
+						Tetris.text_active.position.z = -1400;						
 				}
+
+				
+				
+				
 
 			}
 			else {
-//			Tetris.sounds["collision"] = document.getElementById("audio_collision"); 	
-//			    Tetris.sounds["move"] = document.getElementById("audio_move");  
 				Tetris.addPoints(-50);
 				Tetris.sounds["collision"].play();
 				
@@ -2425,14 +2352,16 @@ window.addEventListener('keydown', function (event) {
             break;		
 		case 48: // (0)
 			VR_layers = 0;
+			Tetris.sounds["move"].play();
             break;	
 		case 49:// (1)
 			VR_layers = 1;
-			Tetris.sounds["move"].play();
+			VR_letter_x_start_side = 1;
             break;			
 		case 50: //2
 			VR_layers = 2;
-			Tetris.sounds["move"].play();
+			VR_letter_x_start_side = -1;
+			Tetris.text_key.position.x = ((VR_letter_x_start_side*VR_letter_x_start_position)-30);
 			Tetris.sounds["move"].play();
             break;		
 		case 51: //3
