@@ -1,3 +1,28 @@
+
+# Amblyopia (Lazy Eye) WebVR Polyfill examples. 
+This site contains a number of example WebVR Programs that show the potential of 
+creating games and apps to help with Amblyopia therapy.  Specifically:
+
+1) Amblyopia Letter Game (very modified from Tetris source from "http://www.smashinglabs.pl") 
+2) Amblyopia WebVR Tetris (original Tetris source from "http://www.smashinglabs.pl") 
+3) Simple rotating cubes showing use of WebVR layers for left/right/stereo object placement
+
+The source for the three.js tetris game was merged with the WebVR Polyfill examples below. 
+WebVR Polyfill was used choosen for iphone VR compatiblity.  
+No attempt was made to perserve the itegrity of the various repositories of the sources used 
+in these examples.  Various depricated API were manually patched.   
+
+These programs prove that standard commerical VR platforms (Oculus, Iphone, Android..) and 
+WebVR can easily be used to create therapeutic games and apps for Amblyopia. 
+
+The hope is the mainline repositories for VR development will explicitly document features 
+to enable Amblyopia friendly features in nearly all VR games and apps. It's estimated that 
+about 2 to 3 percent of the U.S. population has some degree of amblyopia.
+
+
+https://www.vrlazyeye.com/
+
+
 # WebVR Polyfill
 
 A JavaScript implementation of the [WebVR spec][spec]. This project lets you use
