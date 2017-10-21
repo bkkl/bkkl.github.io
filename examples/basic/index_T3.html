@@ -2,7 +2,7 @@
 <html>
     <head>
 	<!-- BKL  -->
-<title>Web VR Polyfill - basic example</title>
+<title>Amblyopia VR letter game</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, shrink-to-fit=no">
 <meta name="mobile-web-app-capable" content="yes">
@@ -14,7 +14,7 @@
 
             #menu {
                 position: absolute;
-                width: 300px;
+                width: 400px;
                 height: 500px;
 
                 top: 25%; left: 50%;
@@ -97,11 +97,11 @@
 //		<audio id="audio_tada" src="music/tada.mp3" preload="auto"></audio>
 
         <div id="menu">
-            <h1>WebVR polyfill Tetris</h1>
+            <h1>WebVR polyfill Amblyopia Letter Game</h1>
             <p>
 			Game Control<br>
-              Movement: Rt=L,Lt=J,UP=I,DN=K<br>
-              Rotation: AD/SW/QE<br>
+              Press "Space Bar" when the letters match. 100 points<br>
+              Press "L" or left mouse-click if letters don't match. 10 points<br>
 			 <br>
 			Play = press "p" <br>
 			 
@@ -109,9 +109,8 @@
 			  <br>
 			 
 			 Lazy Eye Amblyopia Control<br>
-			  Left eye = press "1" key<br>
-			  Right eye = press "2" key<br>
-			  Both eyes = press "0" key<br>
+			  Weak Left eye = press "1" key<br>
+			  Weak Right eye = press "2" key<br>
 			  
 			  <br>
 	
@@ -119,10 +118,10 @@
 			  WebVR-polyfill Author: BKL<br>
               Original Author: <a href="http://www.smashinglabs.pl">smashinglabs.pl</a>
             </p>
-            <button id="play_button">Play</button>
-			<button id="fullscreen">Fullscreen</button>
-		    <button id="vr">VR </button>
-		    <button id="reset">Reset</button>
+            <button id="play_button">-</button>
+			<button id="fullscreen">-</button>
+		    <button id="vr">-</button>
+		    <button id="reset">-</button>
         </div>
 
         <div id="points">
