@@ -15,6 +15,15 @@ Tetris.sounds = {};
 //BKL used to control left eye / right eye layers. (0 = both, 1=left, 2=right)
 var VR_layers = 0;
 // BKL used to create easy level 
+//BKL global for gamepad
+var gamepadconnected = 0;
+var flipflop = 0;  // debounce control for gamepad buttons 0-3 
+var flipflop2 = 0 ; // debounce control for gamepad 
+var flipflop3 = 0 ; // debounce control for gamepad 
+var flipflop4 = 0 ; // debounce control for gamepad 
+var flipflop5 = 0 ; // debounce control for gamepad 
+
+
 var level = 0;
 var CurrentBlockOpacity = 0;
 var CurrentBlockWireFrame = false;
@@ -50,8 +59,8 @@ Tetris.init = function () {
     Tetris.scene = new THREE.Scene();
 
     // the camera starts at 0,0,0 so pull it back
-    Tetris.camera.position.z = 400;
-	Tetris.camera.position.y = -125;
+    Tetris.camera.position.z = 800;
+	Tetris.camera.position.y = -325;
     Tetris.scene.add(Tetris.camera);
 
     // start the renderer
@@ -59,15 +68,18 @@ Tetris.init = function () {
 
     // attach the render-supplied DOM element
     document.body.appendChild(Tetris.renderer.domElement);
+	
+// Apply VR headset positional data to camera.
+	Tetris.controls = new THREE.VRControls(Tetris.camera);	
 		
     // configuration object
     var boundingBoxConfig = {
         width:360,
         height:360,
-        depth:1200,
+        depth:1800,
         splitX:6,
         splitY:6,
-        splitZ:20
+        splitZ:30
     };
     Tetris.boundingBoxConfig = boundingBoxConfig;
     Tetris.blockSize = boundingBoxConfig.width / boundingBoxConfig.splitX;
@@ -80,14 +92,7 @@ Tetris.init = function () {
 	    texture2.repeat.set( 6, 6 );
 	var material = new THREE.MeshLambertMaterial({ map: texture2, side: THREE.BackSide });
 	
-//	var material = new THREE.MeshPhongMaterial({ map: THREE.TextureLoader('img/crate'), side: THREE.BackSide, opacity: 0.75, transparent: true, wireframe: false });
- //     var material = new THREE.MeshBasicMaterial({color:0xffaa00, wireframe:true, side: THREE.DoubleSide, transparent:true});
-  /*
-    var boundingBox = new THREE.Mesh(
-        new THREE.CubeGeometry(boundingBoxConfig.width, boundingBoxConfig.height, boundingBoxConfig.depth, boundingBoxConfig.splitX, boundingBoxConfig.splitY, boundingBoxConfig.splitZ),
-        new THREE.MeshBasicMaterial({color:0xffaa00, wireframe:true, side: THREE.DoubleSide, transparent:true})
-    );
- */
+
  	var cubeMaterial = new THREE.MeshLambertMaterial( { color: 0xffffff, vertexColors: THREE.VertexColors, side: THREE.BackSide, opacity: 0.90, transparent: true } );
 	var color, face, numberOfSides, vertexIndex;
 	// faces are indexed using characters
@@ -116,12 +121,7 @@ Tetris.init = function () {
 	}
 	
     var boundingBox = new THREE.Mesh( cubeGeometry, material);
-// BKL controling color of the bounding box
-//	boundingBox.setColor = function(color){
-//		boundingBox.material.color = new THREE.Color(color);
-//		}
-//	boundingBox.setColor(0xFFFFFF)  //change color using hex value or
-//	boundingBox.setColor("blue")    //set material color by using color name
+
 
     Tetris.scene.add(boundingBox);
 //  Adding Light
@@ -134,9 +134,6 @@ Tetris.init = function () {
 	light3.position.set( -1, -6, 10 ).normalize();
 	Tetris.scene.add(light3);
 	
-//    Tetris.renderer.render(Tetris.scene, Tetris.camera);
-
-
     Tetris.stats = new Stats();
     Tetris.stats.domElement.style.position = 'absolute';
     Tetris.stats.domElement.style.top = '10px';
@@ -161,36 +158,6 @@ Tetris.start = function () {
 	//BKL test block
 	var geometry2 = new THREE.BoxGeometry(60,60,60);
 
-	
-//	var material2 = new THREE.MeshLambertMaterial();
-//	var loader = new THREE.TextureLoader();
-//	var texture1 = loader.load('img/bricks.jpg');
-//	var texture2 = loader.load('img/crate.jpg');
-/*
-	var texture1 = THREE.ImageUtils.loadTexture( 'img/bricks.jpg' );
-    var texture2 = THREE.ImageUtils.loadTexture( 'img/crate.jpg' );
-	var material2 = new THREE.MeshLambertMaterial({ map: texture2});
-	var cube2 = new THREE.Mesh(geometry2, material2);
-	var cube3 = new THREE.Mesh(geometry2, material2);
-	var fit = new THREE.Object3D(); 
-	// Position cube mesh
-
-	cube2.position.z = 4;
-	cube2.position.x = 0;
-	cube2.position.y = -15;
-	cube2.layers.set(0);
-	
-	cube3.position.z = 4;
-	cube3.position.x = 0;
-	cube3.position.y = -25;
-	cube3.layers.set(0);
-	
-	fit.add(cube2);
-	fit.add(cube3);
-	
-	Tetris.scene.add(fit);
-*/	
-	// bkl 
 	
 	//BKL 
 	// Apply VR stereo rendering to renderer.
@@ -227,6 +194,108 @@ Tetris.animate = function () {
     Tetris.frameTime = time - Tetris._lastFrameTime;
     Tetris._lastFrameTime = time;
     Tetris.cumulatedFrameTime += Tetris.frameTime;
+	Tetris.controls.update();
+// BKL Adding HTML5 GAMEPAD READ
+	if (gamepadconnected == 1) {
+					var gp = navigator.getGamepads()[0];
+					var axeLF = gp.axes[0];
+					var axeUP = gp.axes[1];
+					// left - right joystick
+					if(axeLF < -0.9) {
+						if (flipflop2 == 0) {
+							Tetris.Block.rotate(0, 90, 0);
+							flipflop2 = 1;
+						}	
+					
+					} else if(axeLF > 0.9) {
+						if (flipflop2 == 0) {
+							Tetris.Block.rotate(0, -90, 0);
+							flipflop2 = 1;
+						}
+					
+					} else {
+						flipflop2 = 0;
+					}	
+					
+					// left - right joystick
+					if(axeUP < -0.9) {
+						if (flipflop4 == 0) {
+							Tetris.Block.rotate(90, 0, 0);
+							flipflop4 = 1;
+						}	
+					
+					} else if(axeUP > 0.9) {
+						if (flipflop4 == 0) {
+							Tetris.Block.rotate(-90, 0, 0);
+							flipflop4 = 1;
+						}
+					
+					} else {
+						flipflop4 = 0;
+					}	
+					
+					
+					
+					if(gp.buttons[0].pressed) {
+						if (flipflop == 0) {
+							Tetris.Block.move(-1, 0, 0);
+							flipflop = 1;
+						}	
+						
+					} else if (gp.buttons[2].pressed) { 
+						if (flipflop == 0) {
+							Tetris.Block.move(1, 0, 0);
+							flipflop = 1;
+						}	
+					} else if (gp.buttons[1].pressed) { 
+						if (flipflop == 0) {
+							Tetris.Block.move(0, -1, 0);
+							flipflop = 1;
+						}	
+					} else if (gp.buttons[3].pressed) { 
+						if (flipflop == 0) {
+							Tetris.Block.move(0, 1, 0);
+							flipflop = 1;
+						}							
+					} else {
+						flipflop = 0;
+					}
+					            
+					
+					if(gp.buttons[6].pressed) {
+						if (flipflop3 == 0) {
+							Tetris.Block.moveto(0, 0, -0.5);
+							flipflop3 = 1;
+						}	
+						
+					} else if (gp.buttons[7].pressed) { 
+						if (flipflop3 == 0) {
+							Tetris.Block.moveto(0, 0, -0.5);
+							flipflop3 = 1;
+						}								
+					} else {
+						flipflop3 = 0;
+					}
+					
+					if(gp.buttons[4].pressed) {
+						if (flipflop5 == 0) {
+							Tetris.Block.rotate(0, 0, 90);
+							flipflop5 = 1;
+						}	
+						
+					} else if (gp.buttons[5].pressed) { 
+						if (flipflop5 == 0) {
+							Tetris.Block.rotate(0, 0, -90);
+							flipflop5 = 1;
+						}								
+					} else {
+						flipflop5 = 0 ;
+					}
+					
+	}
+
+// BKL end Gamepad	
+	
 // adding progressive effect for new blocks 	
 	if (CurrentBlockOpacity <1){
 		 CurrentBlockOpacity = CurrentBlockOpacity+0.005;
@@ -259,10 +328,7 @@ Tetris.animate = function () {
 	
 	Tetris.stats.update();
 	 
-//	Tetris.Block.mesh.layers.set(1);
-//    Tetris.renderer.render(Tetris.scene, Tetris.camera);
-	// BKL Render the VR scene.
-//	Tetris.camera.updateProjectionMatrix();
+
 	Tetris.effect.render(Tetris.scene, Tetris.camera);
    
 	// BKL    if (!Tetris.gameOver) window.requestAnimationFrame(Tetris.animate);
@@ -307,10 +373,6 @@ window.addEventListener('resize', onResize);
 window.addEventListener('vrdisplaypresentchange', onVRDisplayPresentChange);
 
 
-
-// nice test:
-// var i = 0, j = 0, k = 0, interval = setInterval(function() {if(i==6) {i=0;j++;} if(j==6) {j=0;k++;} if(k==6) {clearInterval(interval); return;} Tetris.addStaticBlock(i,j,k); i++;},30)
-
 Tetris.staticBlocks = [];
 Tetris.zColors = [
     0x6666ff, 0x66ffff, 0xcc68EE, 0x666633, 0x66ff66, 0x9966ff, 0x00ff66, 0x66EE33, 0x003399, 0x330099, 0xFFA500, 0x99ff00, 0xee1289, 0x71C671, 0x00BFFF, 0x666633, 0x669966, 0x9966ff
@@ -340,6 +402,22 @@ Tetris.addPoints = function (n) {
     Cufon.replace('#points');
     Tetris.sounds["score"].play();
 };
+
+// BKL adding HTML-5 Gamepad support 
+
+window.addEventListener("gamepadconnected", function() {
+	var gp = navigator.getGamepads()[0];
+	gamepadconnected = 1;
+
+});
+
+window.addEventListener("gamepaddisconnected", function(e) {
+    	gamepadconnected = 0;
+});
+
+
+//BKL end gamepad 
+
 
 window.addEventListener("load", Tetris.init);
 

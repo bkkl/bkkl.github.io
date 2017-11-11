@@ -98,7 +98,7 @@ Tetris.Block.generate = function () {
 	
 	
     // initial position
-    Tetris.Block.position = {x:Math.floor(Tetris.boundingBoxConfig.splitX / 2) - 1, y:(Math.floor(Tetris.boundingBoxConfig.splitY / 2) - 1), z:15};
+    Tetris.Block.position = {x:Math.floor(Tetris.boundingBoxConfig.splitX / 2) - 1, y:(Math.floor(Tetris.boundingBoxConfig.splitY / 2) - 1), z:12};
 
     if (Tetris.Board.testCollision(true) === Tetris.Board.COLLISION.GROUND) {
         Tetris.gameOver = true;

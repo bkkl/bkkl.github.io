@@ -14,6 +14,10 @@ window.Tetris = window.Tetris || {};
 Tetris.sounds = {};
 //BKL used to control left eye / right eye layers. (0 = both, 1=left (default), 2=right)
 var VR_layers = 1;
+//BKL global for gamepad
+var gamepadconnected = 0;
+var flipflop3 = 0 ; // debounce control for gamepad 
+var flipflop5 = 0 ; // debounce control for gamepad 
 
 var VR_letter_x_start_position_ref = 30;
 var VR_letter_x_start_position = VR_letter_x_start_position_ref;
@@ -1476,8 +1480,6 @@ Tetris.init = function () {
 
     // attach the render-supplied DOM element
     document.body.appendChild(Tetris.renderer.domElement);
-	//BKL - add controller 
-//	Tetris.vrcontroler = new THREE.VRController(Tetris.camera);
 	
 	// add headset postion control
 	// Apply VR headset positional data to camera.
@@ -1689,8 +1691,106 @@ Tetris.animate = function () {
 // Adding headset postion control 	
 	Tetris.controls.update();
 // BKL adding input from controller
-	THREE.VRController.update()	
-//	Tetris.controller.update();
+// BKL Adding HTML5 GAMEPAD READ
+	if (gamepadconnected == 1) {
+					var gp = navigator.getGamepads()[0];
+/* 					var axeLF = gp.axes[0];
+					var axeUP = gp.axes[1];
+					// left - right joystick
+					if(axeLF < -0.9) {
+						if (flipflop2 == 0) {
+							Tetris.Block.rotate(0, 90, 0);
+							flipflop2 = 1;
+						}	
+					
+					} else if(axeLF > 0.9) {
+						if (flipflop2 == 0) {
+							Tetris.Block.rotate(0, -90, 0);
+							flipflop2 = 1;
+						}
+					
+					} else {
+						flipflop2 = 0;
+					}	
+					
+					// left - right joystick
+					if(axeUP < -0.9) {
+						if (flipflop4 == 0) {
+							Tetris.Block.rotate(90, 0, 0);
+							flipflop4 = 1;
+						}	
+					
+					} else if(axeUP > 0.9) {
+						if (flipflop4 == 0) {
+							Tetris.Block.rotate(-90, 0, 0);
+							flipflop4 = 1;
+						}
+					
+					} else {
+						flipflop4 = 0;
+					}	
+					
+					
+					
+					if(gp.buttons[0].pressed) {
+						if (flipflop == 0) {
+							Tetris.Block.move(-1, 0, 0);
+							flipflop = 1;
+						}	
+						
+					} else if (gp.buttons[2].pressed) { 
+						if (flipflop == 0) {
+							Tetris.Block.move(1, 0, 0);
+							flipflop = 1;
+						}	
+					} else if (gp.buttons[1].pressed) { 
+						if (flipflop == 0) {
+							Tetris.Block.move(0, -1, 0);
+							flipflop = 1;
+						}	
+					} else if (gp.buttons[3].pressed) { 
+						if (flipflop == 0) {
+							Tetris.Block.move(0, 1, 0);
+							flipflop = 1;
+						}							
+					} else {
+						flipflop = 0;
+					} */
+					            
+					
+					if(gp.buttons[5].pressed) {
+						if (flipflop3 == 0) {
+							wrong_letter();
+							flipflop3 = 1;
+						}	
+						
+					} else if (gp.buttons[7].pressed) { 
+						if (flipflop3 == 0) {
+							wrong_letter();
+							flipflop3 = 1;
+						}								
+					} else {
+						flipflop3 = 0;
+					}
+					
+					if(gp.buttons[4].pressed) {
+						if (flipflop5 == 0) {
+							correct_letter();
+							flipflop5 = 1;
+						}	
+						
+					} else if (gp.buttons[6].pressed) { 
+						if (flipflop5 == 0) {
+							correct_letter();
+							flipflop5 = 1;
+						}								
+					} else {
+						flipflop5 = 0 ;
+					}
+					
+	}
+
+// BKL end Gamepad
 	
 
     while (Tetris.cumulatedFrameTime > Tetris.gameStepTime) {
@@ -1995,6 +2095,94 @@ function rand_set_active (rand_key_value) {
 		} 
 }
 
+// BKL Function to process "wrong" letter input from "mouse click", "L letter press" or "right controller main button"
+function wrong_letter() {
+			if (key_letter != current_letter){
+				Tetris.addPoints(10);
+				Tetris.sounds["score"].play();
+			    if (Math.abs(key_letter-current_letter) < 10){
+				current_letter=key_letter; 
+			    }
+				else {current_letter = rand_num();
+				}
+			}
+			else {current_letter = rand_num();
+				Tetris.addPoints(-50);
+				Tetris.sounds["collision"].play();
+			}
+			Tetris.text_active.visible = false;
+			rand_set_active(current_letter);
+			Tetris.text_active.position.x = (-15 * VR_letter_x_start_side);
+//			Tetris.text_active.position.x = -10;
+			Tetris.text_active.position.z = -1400;
+			
+			Tetris.scene.add(Tetris.text_active);
+			Tetris.text_active.visible = true;	
+			// bkl add random level 
+			if (Tetris.currentPoints > 150) {
+					Tetris.text_active.position.x = (VR_letter_x_start_side*-Math.floor(Math.random() * (VR_active_rnd_x_start)));
+					Tetris.text_active.position.y = (Math.floor(Math.random()*VR_active_rnd_y_start) - (VR_active_rnd_y_start/2-1));
+					Tetris.text_active.position.z = -1400;
+			}
+} 	
+// End "wrong" letter
+
+// BKL Function to process "correct" letter input from "space bar" or "rleft controller main button"
+function correct_letter() {
+				if (key_letter == current_letter){	
+			// reset for next round 
+			
+			// swap field of view to make more challenging 
+				if (Tetris.currentPoints > 3000) {
+						VR_letter_x_start_side =  Math.floor(Math.random() * 2 - 1);
+						VR_letter_x_start_position = VR_letter_x_start_position_ref+30;
+						if (VR_letter_x_start_side == 0){
+								VR_letter_x_start_side	= 1
+								VR_letter_x_start_position = VR_letter_x_start_position_ref;
+						}
+				}
+			// 	end field of view swap 
+				Tetris.text_key.visible = false;
+				key_letter = rand_num();
+				rand_set_key(key_letter);
+				Tetris.text_key.position.x = (VR_letter_x_start_side*VR_letter_x_start_position);
+				Tetris.text_key.position.z = -150;
+				Tetris.scene.add(Tetris.text_key);
+				Tetris.text_key.visible = true;
+
+				//
+				Tetris.text_active.visible = false;
+				current_letter = rand_num();
+				rand_set_active(current_letter);
+				Tetris.text_active.position.x = (VR_letter_x_start_side*-VR_letter_x_start_position);
+//				Tetris.text_active.position.x = (-VR_letter_x_start_position);
+				Tetris.text_active.position.z = -1400;	
+				
+				Tetris.scene.add(Tetris.text_active);
+				Tetris.text_active.visible = true;
+				// scoring update
+				Tetris.addPoints(100);
+				Tetris.sounds["score"].play();
+				// bkl add random level 
+				if (Tetris.currentPoints > 150) {
+						Tetris.text_active.position.x = (VR_letter_x_start_side*-Math.floor(Math.random() * (VR_active_rnd_x_start)));
+						Tetris.text_active.position.y = (Math.floor(Math.random()*VR_active_rnd_y_start) - (VR_active_rnd_y_start/2-1));
+						Tetris.text_active.position.z = -1400;						
+				}
+
+				
+				
+				
+
+			}
+			else {
+				Tetris.addPoints(-50);
+				Tetris.sounds["collision"].play();
+				
+			}
+} 	
+// End "correct" letter
+
 function onVRDisplayPresentChange() {
   console.log('onVRDisplayPresentChange');
   onResize();
@@ -2004,102 +2192,7 @@ function onVRDisplayPresentChange() {
 window.addEventListener('resize', onResize);
 window.addEventListener('vrdisplaypresentchange', onVRDisplayPresentChange);
 
-// BKL - controller input 
-//  Check this out: When THREE.VRController finds a new controller
-//  it will emit a custom “vr controller connected” event on the
-//  global window object. It uses this to pass you the controller
-//  instance and from there you do what you want with it.
 
-window.addEventListener( 'vr controller connected', function( event ){
-
-	//  Here it is, your VR controller instance.
-	//  It’s really a THREE.Object3D so you can just add it to your scene:
-	Tetris.controller = new THREE.VRController()
-	Tetris.controller = event.detail
-	Tetris.scene.add( Tetris.controller )
-
-	//  HEY HEY HEY! This is important. You need to make sure you do this.
-	//  For standing experiences (not seated) we need to set the standingMatrix
-	//  otherwise you’ll wonder why your controller appears on the floor
-	//  instead of in your hands! And for seated experiences this will have no
-	//  effect, so safe to do either way:
-
-//	controller.standingMatrix = renderer.vr.getStandingMatrix()
-
-
-	//  And for 3DOF (seated) controllers you need to set the controller.head
-	//  to reference your camera. That way we can make an educated guess where
-	//  your hand ought to appear based on the camera’s rotation.
-
-	Tetris.controller.head = Tetris.camera
-
-
-	//  Right now your controller has no visual.
-	//  It’s just an empty THREE.Object3D.
-	//  Let’s fix that!
-
-	var
-	meshColorOff = 0xFF4040,
-	meshColorOn  = 0xFFFF00,
-	controllerMaterial = new THREE.MeshStandardMaterial({
-
-		color: meshColorOff
-	}),
-	controllerMesh = new THREE.Mesh(
-
-		new THREE.CylinderGeometry( 0.005, 0.05, 0.1, 6 ),
-		controllerMaterial
-	),
-	handleMesh = new THREE.Mesh(
-
-		new THREE.BoxGeometry( 0.03, 0.1, 0.03 ),
-		controllerMaterial
-	)
-
-	controllerMaterial.flatShading = true
-	controllerMesh.rotation.x = -Math.PI / 2
-	handleMesh.position.y = -0.05
-	controllerMesh.add( handleMesh )
-	Tetris.controller.userData.mesh = controllerMesh//  So we can change the color later.
-	Tetris.controller.add( controllerMesh )
-
-
-	//  Allow this controller to interact with DAT GUI.
-
-//	var guiInputHelper = dat.GUIVR.addInputObject( controller )
-//	scene.add( guiInputHelper )
-
-
-	//  Button events. How easy is this?!
-	//  We’ll just use the “primary” button -- whatever that might be ;)
-	//  Check out the THREE.VRController.supported{} object to see
-	//  all the named buttons we’ve already mapped for you!
-
-	Tetris.controller.addEventListener( 'primary press began', function( event ){
-
-		event.target.userData.mesh.material.color.setHex( meshColorOn )
-//		Tetris.sounds["gameover"].play();
-//		guiInputHelper.pressed( true )
-	})
-	Tetris.controller.addEventListener( 'primary press ended', function( event ){
-		event.target.userData.mesh.material.color.setHex( meshColorOff )
-//		Tetris.sounds["gameover"].play();
-//		guiInputHelper.pressed( false )
-	})
-
-
-	//  Daddy, what happens when we die?
-
-	Tetris.controller.addEventListener( 'disconnected', function( event ){
-
-		Tetris.controller.parent.remove( Tetris.controller )
-	})
-})
-
-// end BLK controller input 
-
-// nice test:
-// var i = 0, j = 0, k = 0, interval = setInterval(function() {if(i==6) {i=0;j++;} if(j==6) {j=0;k++;} if(k==6) {clearInterval(interval); return;} Tetris.addStaticBlock(i,j,k); i++;},30)
 
 Tetris.staticBlocks = [];
 Tetris.zColors = [
@@ -2184,35 +2277,20 @@ Tetris.addPoints = function (n) {
 
 window.addEventListener("load", Tetris.init);
 
+// BKL adding HTML-5 Gamepad support 
+
+window.addEventListener("gamepadconnected", function() {
+	var gp = navigator.getGamepads()[0];
+	gamepadconnected = 1;
+
+});
+
+window.addEventListener("gamepaddisconnected", function(e) {
+    	gamepadconnected = 0;
+});
+
 window.addEventListener('click', function (event) {
-	 //Tetris.Block.move(1, 0, 0);
-			if (key_letter != current_letter){
-				Tetris.addPoints(10);
-				Tetris.sounds["score"].play();
-			    if (Math.abs(key_letter-current_letter) < 10){
-				current_letter=key_letter; 
-			    }
-				else {current_letter = rand_num();
-				}
-			}
-			else {current_letter = rand_num();
-				Tetris.addPoints(-50);
-				Tetris.sounds["collision"].play();
-			}
-			Tetris.text_active.visible = false;
-			rand_set_active(current_letter);
-			Tetris.text_active.position.x = (-15 * VR_letter_x_start_side);
-//			Tetris.text_active.position.x = -10;
-			Tetris.text_active.position.z = -1400;
-			
-			Tetris.scene.add(Tetris.text_active);
-			Tetris.text_active.visible = true;	
-			// bkl add random level 
-			if (Tetris.currentPoints > 150) {
-					Tetris.text_active.position.x = (VR_letter_x_start_side*-Math.floor(Math.random() * (VR_active_rnd_x_start)));
-					Tetris.text_active.position.y = (Math.floor(Math.random()*VR_active_rnd_y_start) - (VR_active_rnd_y_start/2-1));
-					Tetris.text_active.position.z = -1400;
-			}
+	 wrong_letter();
 })
 
 window.addEventListener('keydown', function (event) {
@@ -2231,91 +2309,15 @@ window.addEventListener('keydown', function (event) {
           
             break;
         case 76: // right (l)
-            //Tetris.Block.move(1, 0, 0);
-	 //Tetris.Block.move(1, 0, 0);
-			if (key_letter != current_letter){
-				Tetris.addPoints(10);
-				Tetris.sounds["score"].play();
-			    if (Math.abs(key_letter-current_letter) < 10){
-				current_letter=key_letter; 
-			    }
-				else {current_letter = rand_num();
-				}
-			}
-			else {current_letter = rand_num();
-				Tetris.addPoints(-50);
-				Tetris.sounds["collision"].play();
-			}
-			Tetris.text_active.visible = false;
-			rand_set_active(current_letter);
-			Tetris.text_active.position.x = (VR_letter_x_start_side*-15);
-//			Tetris.text_active.position.x = (-10);
-			Tetris.text_active.position.z = -1400;
-			
-			Tetris.scene.add(Tetris.text_active);
-			Tetris.text_active.visible = true;	
-			// bkl add random level 
-			if (Tetris.currentPoints > 150) {
-					Tetris.text_active.position.x = (VR_letter_x_start_side*-Math.floor(Math.random() * (VR_active_rnd_x_start)));
-					Tetris.text_active.position.y = (Math.floor(Math.random()*VR_active_rnd_y_start) - (VR_active_rnd_y_start/2-1));
-					Tetris.text_active.position.z = -1400;
-			}
+
+			 wrong_letter();
+
 					
             break;
 			
         case 32: // space
+			correct_letter() ;
 		
-			if (key_letter == current_letter){	
-			// reset for next round 
-			
-			// swap field of view to make more challenging 
-				if (Tetris.currentPoints > 3000) {
-						VR_letter_x_start_side =  Math.floor(Math.random() * 2 - 1);
-						VR_letter_x_start_position = VR_letter_x_start_position_ref+30;
-						if (VR_letter_x_start_side == 0){
-								VR_letter_x_start_side	= 1
-								VR_letter_x_start_position = VR_letter_x_start_position_ref;
-						}
-				}
-			// 	end field of view swap 
-				Tetris.text_key.visible = false;
-				key_letter = rand_num();
-				rand_set_key(key_letter);
-				Tetris.text_key.position.x = (VR_letter_x_start_side*VR_letter_x_start_position);
-				Tetris.text_key.position.z = -150;
-				Tetris.scene.add(Tetris.text_key);
-				Tetris.text_key.visible = true;
-
-				//
-				Tetris.text_active.visible = false;
-				current_letter = rand_num();
-				rand_set_active(current_letter);
-				Tetris.text_active.position.x = (VR_letter_x_start_side*-VR_letter_x_start_position);
-//				Tetris.text_active.position.x = (-VR_letter_x_start_position);
-				Tetris.text_active.position.z = -1400;	
-				
-				Tetris.scene.add(Tetris.text_active);
-				Tetris.text_active.visible = true;
-				// scoring update
-				Tetris.addPoints(100);
-				Tetris.sounds["score"].play();
-				// bkl add random level 
-				if (Tetris.currentPoints > 150) {
-						Tetris.text_active.position.x = (VR_letter_x_start_side*-Math.floor(Math.random() * (VR_active_rnd_x_start)));
-						Tetris.text_active.position.y = (Math.floor(Math.random()*VR_active_rnd_y_start) - (VR_active_rnd_y_start/2-1));
-						Tetris.text_active.position.z = -1400;						
-				}
-
-				
-				
-				
-
-			}
-			else {
-				Tetris.addPoints(-50);
-				Tetris.sounds["collision"].play();
-				
-			}
             break;
 
         case 87: // up (w)
