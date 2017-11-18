@@ -14,6 +14,7 @@ window.Tetris = window.Tetris || {};
 Tetris.sounds = {};
 //BKL used to control left eye / right eye layers. (0 = both, 1=left (default), 2=right)
 var VR_layers = 1;
+var N_VR_layers = 2;
 //BKL global for gamepad
 var gamepadconnected = 0;
 var flipflop3 = 0 ; // debounce control for gamepad 
@@ -1990,7 +1991,7 @@ function rand_set_key (rand_key_value) {
 				Tetris.text_key = Tetris.text_key_Z;
 				break;		
 		}	
-		Tetris.text_key.layers.set(0);
+		Tetris.text_key.layers.set(N_VR_layers);
 }
 
 function rand_set_active (rand_key_value) {
@@ -2133,7 +2134,7 @@ function correct_letter() {
 			// reset for next round 
 			
 			// swap field of view to make more challenging 
-				if (Tetris.currentPoints > 3000) {
+				if (Tetris.currentPoints > 2000) {
 						VR_letter_x_start_side =  Math.floor(Math.random() * 2 - 1);
 						VR_letter_x_start_position = VR_letter_x_start_position_ref+30;
 						if (VR_letter_x_start_side == 0){
@@ -2354,14 +2355,17 @@ window.addEventListener('keydown', function (event) {
             break;		
 		case 48: // (0)
 			VR_layers = 0;
+			N_VR_layers = 0;
 			Tetris.sounds["move"].play();
             break;	
 		case 49:// (1)
 			VR_layers = 1;
+			N_VR_layers = 2;
 			VR_letter_x_start_side = 1;
             break;			
 		case 50: //2
 			VR_layers = 2;
+			N_VR_layers = 1;
 			VR_letter_x_start_side = -1;
 			Tetris.text_key.position.x = ((VR_letter_x_start_side*VR_letter_x_start_position)-30);
 			Tetris.sounds["move"].play();
