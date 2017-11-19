@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<!-- WebVR VR Lazy eye (amblyopia) programming example -->
+<!-- Uses the built in layer render hooks in WebVR to place objects only in the right or left eye. -->
+<!-- For Lazy eye (amblyopia) the idea is to put the object of interest in the weak eye -->
+<!-- For the "strong" eye place background and reference objects -->
+<!-- Search code for "layers.set" property to see the one line of code needed to enable VR Lazy eye (amblyopia) features to any WebVR project or game -->
+<!-- Created by BKL: see vrlazyeye.com for more info or to participate -->
+
+
+<html lang="en">
+<head>
+<title>Web VR Polyfill - basic example</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, shrink-to-fit=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<style>
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  color: #fff;
+  margin: 0px;
+  padding: 0;
+  overflow: hidden;
+}
+canvas {
+  position: absolute;
+  top: 0;
+}
+#buttons {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  background: white;
+}
+</style>
+</head>
+
+<body>
+
+  <div id="buttons">
+    <button id="fullscreen">Fullscreen</button>
+    <button id="vr">VR (WebVR/Mobile only)</button>
+    <button id="reset">Reset</button>
+  </div>
+
+</body>
+
+<script>
+WebVRConfig = {
+  BUFFER_SCALE: 1.0,
+};
+document.addEventListener('touchmove', function(e) {
+  e.preventDefault();
+});
+</script>
+
+<!-- three.js library -->
+<script src="node_modules/three/build/three.js"></script>
+
+<!-- VRControls.js applies the WebVR transformations to a three.js camera object. -->
+<script src="node_modules/three/examples/js/controls/VRControls.js"></script>
+
+<!-- VREffect.js handles stereo camera setup and rendering.  -->
+<script src="node_modules/three/examples/js/effects/VREffect.js"></script>
+
+<!-- A polyfill for the WebVR API.  -->
+<script src="../../build/webvr-polyfill.js"></script>
+
+
+<script>
+// Setup three.js WebGL renderer. Note: Antialiasing is a big performance hit.
+// Only enable it if you actually need to.
+var renderer = new THREE.WebGLRenderer({antialias: false});
+renderer.setPixelRatio(Math.floor(window.devicePixelRatio));
+// Append the canvas element created by the renderer to document body element.
+document.body.appendChild(renderer.domElement);
+// Create a three.js scene.
+var scene = new THREE.Scene();
+// Create a three.js camera.
+var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+// Apply VR headset positional data to camera.
+var controls = new THREE.VRControls(camera);
+// Apply VR stereo rendering to renderer.
+var effect = new THREE.VREffect(renderer);
+effect.setSize(window.innerWidth, window.innerHeight);
+// Add a repeating grid as a skybox.
+var boxWidth = 5;
+var loader = new THREE.TextureLoader();
+loader.load('img/box.png', onTextureLoaded);
+// Get the VRDisplay and save it for later.
+var vrDisplay = null;
+navigator.getVRDisplays().then(function(displays) {
+  if (displays.length > 0) {
+    vrDisplay = displays[0];
+    // Kick off the render loop.
+    vrDisplay.requestAnimationFrame(animate);
+  }
+});
+function onTextureLoaded(texture) {
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(boxWidth, boxWidth);
+  var geometry = new THREE.BoxGeometry(boxWidth, boxWidth, boxWidth);
+  var material = new THREE.MeshBasicMaterial({
+    map: texture,
+    color: 0x01BE00,
+    side: THREE.BackSide
+  });
+  var skybox = new THREE.Mesh(geometry, material);
+//  scene.add(skybox);
+}
+//
+    var light = new THREE.DirectionalLight( 0xffffff );
+    light.position.set( 0, 1, 1 ).normalize();
+    scene.add(light);
+// Create 3D objects.
+var geometry = new THREE.BoxGeometry(2.5, 2.5, 2.5);
+//var material = new THREE.MeshNormalMaterial();
+var Texture = THREE.ImageUtils.loadTexture( 'img/crate.jpg' );
+var material3 = new THREE.MeshLambertMaterial({ map: Texture });
+// BKL creating a standard webvr opject - will be shown to both eyes by default
+var cube = new THREE.Mesh(geometry, material3);
+// Position cube mesh
+cube.position.z = -10
+cube.position.x= 3
+//BKL
+var geometry2 = new THREE.BoxGeometry(1,1,1);
+var material2 = new THREE.MeshNormalMaterial();
+// Create a 2nd object - this object we will only show to the left eye using layers property
+var cube2 = new THREE.Mesh(geometry, material2);
+// Position 2nd cube object 
+cube2.position.z = -10
+cube2.position.x = -3
+cube2.position.y = 0;
+/**************************************/
+/* BKL this is it - one line of code is all you need to help out people with enable VR Lazy eye (amblyopia) features to any WebVR project or game */ 
+/* cube2.layers.set(0);  // renders object to both eyes - default
+/* cube2.layers.set(1);  // renders object to left eye 
+/* cube2.layers.set(2);  // renders object to right eye 
+/*************************************/
+cube2.layers.set(1);
+// Add both cudes to your three.js scene
+scene.add(cube);
+scene.add(cube2);
+// Request animation frame loop function
+var lastRender = 0;
+function animate(timestamp) {
+  var delta = Math.min(timestamp - lastRender, 500);
+  lastRender = timestamp;
+  // Apply rotation to both cubes mesh
+  cube.rotation.y += delta * 0.0006;
+  cube2.rotation.x+= delta * 0.0003;
+  // Update VR headset position and apply to camera.
+  controls.update();
+  // Render the scene.
+  effect.render(scene, camera);
+  // Keep looping.
+  vrDisplay.requestAnimationFrame(animate);
+}
+function onResize() {
+  console.log('Resizing to %s x %s.', window.innerWidth, window.innerHeight);
+  effect.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+}
+function onVRDisplayPresentChange() {
+  console.log('onVRDisplayPresentChange');
+  onResize();
+}
+// Resize the WebGL canvas when we resize and also when we change modes.
+window.addEventListener('resize', onResize);
+window.addEventListener('vrdisplaypresentchange', onVRDisplayPresentChange);
+// Button click handlers.
+document.querySelector('button#fullscreen').addEventListener('click', function() {
+  enterFullscreen(renderer.domElement);
+});
+document.querySelector('button#vr').addEventListener('click', function() {
+  vrDisplay.requestPresent([{source: renderer.domElement}]);
+});
+document.querySelector('button#reset').addEventListener('click', function() {
+  vrDisplay.resetPose();
+});
+function enterFullscreen (el) {
+  if (el.requestFullscreen) {
+    el.requestFullscreen();
+  } else if (el.mozRequestFullScreen) {
+    el.mozRequestFullScreen();
+  } else if (el.webkitRequestFullscreen) {
+    el.webkitRequestFullscreen();
+  } else if (el.msRequestFullscreen) {
+    el.msRequestFullscreen();
+  }
+}
+</script>
+
+</html>
