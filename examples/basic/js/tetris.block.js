@@ -102,7 +102,7 @@ Tetris.Block.generate = function () {
 
     if (Tetris.Board.testCollision(true) === Tetris.Board.COLLISION.GROUND) {
         Tetris.gameOver = true;
-        Tetris.pointsDOM.innerHTML = "GAME OVER";
+//        Tetris.pointsDOM.innerHTML = "GAME OVER";
         Tetris.sounds["gameover"].play();
         Cufon.replace('#points');
     }
