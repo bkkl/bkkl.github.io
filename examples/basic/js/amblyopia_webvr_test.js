@@ -2282,8 +2282,12 @@ window.addEventListener("load", Tetris.init);
 
 window.addEventListener("gamepadconnected", function() {
 	var gp = navigator.getGamepads()[0];
-	gamepadconnected = 1;
-
+	// testing to make sure connected controller has enough buttons and axis for control - this code tested only with PS4 controller
+	if (gp.buttons.length > 8) {
+		if (gp.axes.length > 1) {
+				gamepadconnected = 1;
+		}
+	}
 });
 
 window.addEventListener("gamepaddisconnected", function(e) {

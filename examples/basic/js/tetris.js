@@ -181,7 +181,7 @@ Tetris.start = function () {
 };
 
 
-Tetris.gameStepTime = 750;
+Tetris.gameStepTime = 1000;
 
 Tetris.frameTime = 0; // ms
 Tetris.cumulatedFrameTime = 0; // ms
@@ -203,13 +203,13 @@ Tetris.animate = function () {
 					// left - right joystick
 					if(axeLF < -0.9) {
 						if (flipflop2 == 0) {
-							Tetris.Block.rotate(0, 90, 0);
+							Tetris.Block.rotate(0, -90, 0);
 							flipflop2 = 1;
 						}	
 					
 					} else if(axeLF > 0.9) {
 						if (flipflop2 == 0) {
-							Tetris.Block.rotate(0, -90, 0);
+							Tetris.Block.rotate(0, 90, 0);
 							flipflop2 = 1;
 						}
 					
@@ -220,13 +220,13 @@ Tetris.animate = function () {
 					// left - right joystick
 					if(axeUP < -0.9) {
 						if (flipflop4 == 0) {
-							Tetris.Block.rotate(90, 0, 0);
+							Tetris.Block.rotate(-90, 0, 0);
 							flipflop4 = 1;
 						}	
 					
 					} else if(axeUP > 0.9) {
 						if (flipflop4 == 0) {
-							Tetris.Block.rotate(-90, 0, 0);
+							Tetris.Block.rotate(90, 0, 0);
 							flipflop4 = 1;
 						}
 					
@@ -407,8 +407,12 @@ Tetris.addPoints = function (n) {
 
 window.addEventListener("gamepadconnected", function() {
 	var gp = navigator.getGamepads()[0];
-	gamepadconnected = 1;
-
+	// testing to make sure connected controller has enough buttons and axis for control - this code tested only with PS4 controller
+	if (gp.buttons.length > 8) {
+		if (gp.axes.length > 1) {
+				gamepadconnected = 1;
+		}
+	}
 });
 
 window.addEventListener("gamepaddisconnected", function(e) {
@@ -490,7 +494,16 @@ window.addEventListener('keydown', function (event) {
 		case 52: //4
 			level = 0;
             break;		
+		case 53: //5
+			Tetris.camera.translateZ(-50);
+            Tetris.sounds["score"].play();
+			break;			
 			 
+		case 54: //6
+			Tetris.camera.position.z = Tetris.camera.position.z-50;
+            Tetris.sounds["score"].play();
+			break;	 
+
     }
 }, false);	
 
