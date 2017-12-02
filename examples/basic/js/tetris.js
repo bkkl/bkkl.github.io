@@ -400,7 +400,9 @@ Tetris.addPoints = function (n) {
     
 	Tetris.pointsDOM.innerHTML = Tetris.currentPoints; 
     Cufon.replace('#points');
-    Tetris.sounds["score"].play();
+	if (n == 1000) {
+		Tetris.sounds["score"].play();
+	}
 };
 
 // BKL adding HTML-5 Gamepad support 

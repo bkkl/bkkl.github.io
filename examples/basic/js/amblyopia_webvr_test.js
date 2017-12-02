@@ -39,7 +39,10 @@ var z_start = 550;
 var font_size = 10;
 var font_size_key = 50;
 var ptextMaterial = new THREE.MeshPhongMaterial( { color: 0xeeeeee, reflectivity: 0xffffff, shininess: 100} );
-
+//bkl added to attempt to track progress of amblyopia therapy -> higher z_avg would indicate smaller letter reconginition. 
+var z_score = 0;
+var z_count = 0;
+var z_avg = 0;
 
 // BKL load fonts and preload master letter and 
 
@@ -1590,6 +1593,7 @@ Tetris.init = function () {
 
 Tetris.start = function () {
     document.getElementById("menu").style.display = "none";
+// bkl - changing HTML points to z_avg to show progress 	
     Tetris.pointsDOM = document.getElementById("points");
     Tetris.pointsDOM.style.display = "block";
 	
@@ -2099,6 +2103,11 @@ function rand_set_active (rand_key_value) {
 // BKL Function to process "wrong" letter input from "mouse click", "L letter press" or "right controller main button"
 function wrong_letter() {
 			if (key_letter != current_letter){
+				// bkl keep track of avg z-distance for correct choice  (larger number is better, indicates smaller letter recognition )
+					z_score = z_score + Tetris.text_active.position.z;
+					z_count = z_count+1;
+					z_avg = Math.round(z_score/z_count);
+				
 				Tetris.addPoints(10);
 				Tetris.sounds["score"].play();
 			    if (Math.abs(key_letter-current_letter) < 10){
@@ -2130,7 +2139,12 @@ function wrong_letter() {
 
 // BKL Function to process "correct" letter input from "space bar" or "rleft controller main button"
 function correct_letter() {
-				if (key_letter == current_letter){	
+			if (key_letter == current_letter){	
+			// bkl keep track of avg z-distance for correct choice  (larger number is better, indicates smaller letter recognition )
+			z_score = z_score + Tetris.text_active.position.z;
+			z_count = z_count+1;
+			z_avg = Math.round(z_score/z_count);
+				
 			// reset for next round 
 			
 			// swap field of view to make more challenging 
@@ -2220,7 +2234,8 @@ Tetris.currentPoints = 0;
 Tetris.addPoints = function (n) {
     Tetris.currentPoints += n;
     
-	Tetris.pointsDOM.innerHTML = Tetris.currentPoints; 
+//	Tetris.pointsDOM.innerHTML = Tetris.currentPoints; 
+	Tetris.pointsDOM.innerHTML = z_avg; 
     Cufon.replace('#points');
 //    Tetris.sounds["score"].play();
 	// update score in 3D BKL

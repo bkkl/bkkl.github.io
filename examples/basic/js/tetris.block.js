@@ -118,6 +118,8 @@ Tetris.Block.generate = function () {
     Tetris.scene.add(Tetris.Block.mesh);
 	Tetris.Block.move(0, -1, 0);
 	Tetris.Block.move(0, -1, 0);
+	// bkl - giving some points for each block used
+	Tetris.addPoints(10);
 };
 
 
