@@ -46,23 +46,23 @@
                 color: #fff;
             }
 
-            #points {
+			#points {
                 position: absolute;
-                width: 10px;
-                height: 1px;
+                width: 100px;
+                height:20px;
 
                 padding: 12px;
 
-                top: 40px;
+                top: 4px;
                 right: 8px;
 
                 border: 1px solid #000;
                 border-radius: 1px;
 
-                background-color: #E36B23;
+                background-color: #EA2917;
                 box-shadow: 1px 1px 1px #000;
 
-                font-size: 8px;
+                font-size: 28px;
                 font-weight: bold;
                 color: #000;
 
@@ -93,29 +93,35 @@
         <audio id="audio_collision" src="music/collision.mp3" preload="auto"></audio>
         <audio id="audio_gameover" src="music/gameover.mp3" preload="auto"></audio>
         <audio id="audio_score" src="music/cash.mp3" preload="auto"></audio>
-//		<audio id="audio_bell" src="music/bell.mp3" preload="auto"></audio>
-//		<audio id="audio_tada" src="music/tada.mp3" preload="auto"></audio>
+		<audio id="audio_bell" src="music/bell.mp3" preload="auto"></audio>
+		<audio id="audio_tada" src="music/tada.mp3" preload="auto"></audio>
 
         <div id="menu">
             <h1>WebVR polyfill Amblyopia Letter Game</h1>
+			
             <p>
+			 See vrlazyeye.com for more information: <a href="http://www.vrlazyeye.com">vrlazyeye.com</a> <br>
+			 <br>
 			Game Control<br>
               Press "Space Bar" or "PS4 Controller L1/L2" when the letters match. 100 points<br>
               Press "L" or left mouse-click or PS4 controller R1/R2 if letters don't match. 10 points<br>
 			 <br>
-			Play = press "p" <br>
-			 
-			VR Mode = press "f" <br>
+			To Play = press "p" and then press "f" to enter VR Mode<br>
 			  <br>
 			 
 			 Lazy Eye Amblyopia Control<br>
 			  Weak Left eye = press "1" key<br>
 			  Weak Right eye = press "2" key<br>
+			  	  
+			  <br>
+			  Use ony Firefox with PS4 Controller connected via USB to PC <br>
 			  
 			  <br>
-			  Use Firefox with PS4 Controller connected via USB to PC <br>
-			  
-			  <br>
+			Score in red box is the average Z score, which coorelates to the size of the letter <br>
+			for correct responses. Higher score is better = smaller letter recognition. This value, <br>
+			not the "points", may be used to indicate Amblyopia progress if tracked over many sessions. <br>
+			
+			<br>
 			  
 			  WebVR polyfill Amblyopia Letter Game Author: BKL<br>
               Original Source Author: <a href="http://www.smashinglabs.pl">smashinglabs.pl</a>
@@ -171,3 +177,4 @@
         </script>
     </body>
 </html>
+
