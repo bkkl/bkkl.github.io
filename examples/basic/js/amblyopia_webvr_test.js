@@ -1694,7 +1694,7 @@ Tetris.animate = function () {
     Tetris._lastFrameTime = time;
     Tetris.cumulatedFrameTime += Tetris.frameTime;
 // Adding headset postion control 	
-	Tetris.controls.update();
+//	Tetris.controls.update();
 // BKL adding input from controller
 // BKL Adding HTML5 GAMEPAD READ
 	if (gamepadconnected == 1) {
