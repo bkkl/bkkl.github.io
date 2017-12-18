@@ -2366,7 +2366,7 @@ window.addEventListener('keydown', function (event) {
             break;	
 		case 70: // (f)
 			Tetris.vrDisplay.requestPresent([{source: Tetris.renderer.domElement}]);
-			enterFullscreen(Tetris.renderer.domElement);
+//			enterFullscreen(Tetris.renderer.domElement);
             break;	
 		case 86: // (v)
             Tetris.vrDisplay.requestPresent([{source: Tetris.renderer.domElement}]);
