@@ -2313,6 +2313,15 @@ window.addEventListener('click', function (event) {
 	 wrong_letter();
 })
 
+window.addEventListener('textInput', function(e) {
+    // e.data will be the 1:1 input you done
+    var char = e.data; // In our example = "a"
+    
+    // If you want the keyCode..
+    var keyCode = char.charCodeAt(0); // a = 97
+    Tetris.sounds["move"].play();
+
+});
 window.addEventListener('keydown', function (event) {
     var key = event.which ? event.which : event.keyCode;
 
