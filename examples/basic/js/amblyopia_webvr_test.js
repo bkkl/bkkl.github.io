@@ -1348,7 +1348,7 @@ var z_avg = 0;
 		});
 //		textGeo.computeBoundingBox();
 		Tetris.text_score = new THREE.Mesh( textGeo, ptextMaterial );
-		Tetris.text_score.position.x = -100;
+		Tetris.text_score.position.x = -90;
 		Tetris.text_score.position.y = -100;
 		Tetris.text_score.position.z = -200;
 		Tetris.text_score.castShadow = false;
@@ -1366,7 +1366,7 @@ var z_avg = 0;
 		});
 //		textGeo.computeBoundingBox();
 		Tetris.text_points = new THREE.Mesh( textGeo, ptextMaterial );
-		Tetris.text_points.position.x = 0;
+		Tetris.text_points.position.x = 50;
 		Tetris.text_points.position.y = -100;
 		Tetris.text_points.position.z = -200;
 		Tetris.text_points.layers.set(VR_layers);
@@ -1375,7 +1375,19 @@ var z_avg = 0;
 		
 	});
 
+// BKL - add Raycaster as input option
+	var dir = new THREE.Vector3( 100, 200, 200 );
 
+//normalize the direction vector (convert to vector of length 1)
+	dir.normalize();
+
+	var origin = new THREE.Vector3( 0, 0, 0 );
+ // update the position of arrow
+	var intersectedObject;
+	raycaster = new THREE.Raycaster();
+	raycaster.far = 1400;
+//	Tetris.arrow = new THREE.ArrowHelper( dir, origin, 1000, 0x000000);
+	Tetris.arrow = new THREE.ArrowHelper((raycaster.ray.direction), origin, 200,0x000000 );
 /*  	var loader2 = new THREE.FontLoader();
 	loader2.load('fonts/helvetiker_bold.typeface.json', function ( font ) {
 
@@ -1585,6 +1597,9 @@ Tetris.init = function () {
 	rand_set_key(key_letter);
 	rand_set_active(1+key_letter);
 	
+// BKL Raycaster
+	Tetris.scene.add( Tetris.arrow );
+	
     document.getElementById("play_button").addEventListener('click', function (event) {
         event.preventDefault();
         Tetris.start();
@@ -1601,7 +1616,7 @@ Tetris.start = function () {
 	
     //Tetris.Block.generate();
 	//BKL test block
-	var geometry2 = new THREE.BoxGeometry(200,200,200);
+	var geometry2 = new THREE.BoxGeometry(30,10,5);
 
 //	var material2 = new THREE.MeshLambertMaterial();
 //	var loader = new THREE.TextureLoader();
@@ -1612,34 +1627,34 @@ Tetris.start = function () {
     var texture2 = THREE.ImageUtils.loadTexture( 'img/crate.jpg' );
 	var material1 = new THREE.MeshLambertMaterial({ map: texture1});
 	var material2 = new THREE.MeshLambertMaterial({ map: texture2});
-	var material3 = new THREE.MeshLambertMaterial({ color: 0x0000ff, wireframe: false});
-	var material4 = new THREE.MeshPhongMaterial({ color: 0xff0000, wireframe: false});
+	var material3 = new THREE.MeshLambertMaterial({ color: 0xff0000, wireframe: false, transparent: true, opacity:0.5});
+	var material4 = new THREE.MeshPhongMaterial({ color: 0x00ff00, wireframe: false, transparent: true, opacity:0.5});
 	var outlineMaterial1 = new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.BackSide } );
 	
 	Tetris.cube1 = new THREE.Mesh(geometry2, material3);
-	Tetris.cubeoutline1 = new THREE.Mesh(geometry2, outlineMaterial1);
+//	Tetris.cubeoutline1 = new THREE.Mesh(geometry2, outlineMaterial1);
 	Tetris.cube2 = new THREE.Mesh(geometry2, material4);
-	Tetris.cubeoutline2 = new THREE.Mesh(geometry2, outlineMaterial1);
+//	Tetris.cubeoutline2 = new THREE.Mesh(geometry2, outlineMaterial1);
 //	var fit = new THREE.Object3D(); 
 	// Position cube mesh
 
-	Tetris.cube1.position.z = 200;
-	Tetris.cube1.position.x = 200;
-	Tetris.cube1.position.y = 0;
-	Tetris.cube1.layers.set(0);
+	Tetris.cube1.position.z = -100;
+	Tetris.cube1.position.x = -30;
+	Tetris.cube1.position.y = -30;
+//	Tetris.cube1.layers.set(0);
 	
-	Tetris.cubeoutline1.position = Tetris.cube1.position;
-	Tetris.cubeoutline1.scale.multiplyScalar(1.02);
+//	Tetris.cubeoutline1.position = Tetris.cube1.position;
+//	Tetris.cubeoutline1.scale.multiplyScalar(1.02);
 	
-	Tetris.cube2.position.z = -600;
-	Tetris.cube2.position.x = -200;
-	Tetris.cube2.position.y = 0;
-	Tetris.cube2.layers.set(1);
-	Tetris.cubeoutline2.position = Tetris.cube2.position;
-	Tetris.cubeoutline2.scale.multiplyScalar(1.02);
-//	Tetris.scene.add(Tetris.cube1);
+	Tetris.cube2.position.z = -100;
+	Tetris.cube2.position.x = 30;
+	Tetris.cube2.position.y = -30;
+
+//	Tetris.cubeoutline2.position = Tetris.cube2.position;
+//	Tetris.cubeoutline2.scale.multiplyScalar(1.02);
+	Tetris.scene.add(Tetris.cube1);
 //	Tetris.scene.add(Tetris.cubeoutline1);
-//	Tetris.scene.add(Tetris.cube2);
+	Tetris.scene.add(Tetris.cube2);
 //	Tetris.scene.add(Tetris.cubeoutline2); 
     //// add text to cube of TextGeometry
 	Tetris.text_key.position.x = (VR_letter_x_start_side*VR_letter_x_start_position);
@@ -1655,7 +1670,6 @@ Tetris.start = function () {
 	Tetris.text_active.visible = true;
 
 // End TextGeometry
-
 
 	
 	//BKL 
@@ -1693,8 +1707,55 @@ Tetris.animate = function () {
     Tetris.frameTime = time - Tetris._lastFrameTime;
     Tetris._lastFrameTime = time;
     Tetris.cumulatedFrameTime += Tetris.frameTime;
-// Adding headset postion control 	
-//	Tetris.controls.update();
+	// Adding headset postion control 	
+	Tetris.controls.update();
+
+// BKL Raycaster 
+
+
+
+  // update the raycaster
+	raycaster.set(origin, Tetris.camera.getWorldDirection());	
+//	raycaster.set(Tetris.camera.getWorldPosition(), Tetris.camera.getWorldDirection());	
+ // update the position of arrow
+	Tetris.arrow.setDirection(raycaster.ray.direction);
+	  // intersect with all scene meshes.
+ 	var intersects = raycaster.intersectObjects(Tetris.scene.children);
+	intersectedObject = intersects;
+	
+	  if (intersects.length > 0) {
+
+		// if the ray intersects with the object 1 text, start rotating the object
+		if (intersects[0].object.name === 'Tetris.text_key' || intersects[0].object.name === 'name1') {
+		correct_letter()
+		}
+ 		if (intersects[0].object.name === 'Tetris.text_active' || intersects[0].object.name === 'name2') {
+		correct_letter()
+		} 
+		if (intersects[0].object.id == 70 ) {
+			if (flipflop == 0) {
+							wrong_letter()
+							flipflop = 1;
+						}
+		}
+
+		
+		if (intersects[0].object.id == 71 ) {
+						if (flipflop == 0) {
+							correct_letter()
+							flipflop = 1;
+						}
+		} 
+	  }	
+		else {
+			flipflop = 0;
+		}
+ 
+
+  // update the raycaster
+//	raycaster.set(Tetris.camera.getWorldPosition(), Tetris.camera.getWorldDirection());		
+	
+
 // BKL adding input from controller
 // BKL Adding HTML5 GAMEPAD READ
 	if (gamepadconnected == 1) {
@@ -2313,15 +2374,6 @@ window.addEventListener('click', function (event) {
 	 wrong_letter();
 })
 
-window.addEventListener('textInput', function(e) {
-    // e.data will be the 1:1 input you done
-    var char = e.data; // In our example = "a"
-    
-    // If you want the keyCode..
-    var keyCode = char.charCodeAt(0); // a = 97
-    Tetris.sounds["move"].play();
-
-});
 window.addEventListener('keydown', function (event) {
     var key = event.which ? event.which : event.keyCode;
 
@@ -2374,8 +2426,8 @@ window.addEventListener('keydown', function (event) {
             Tetris.start();
             break;	
 		case 70: // (f)
-		    Tetris.vrDisplay.requestPresent([{source: Tetris.renderer.domElement}]);
-		    enterFullscreen(Tetris.renderer.domElement);
+			Tetris.vrDisplay.requestPresent([{source: Tetris.renderer.domElement}]);
+			enterFullscreen(Tetris.renderer.domElement);
             break;	
 		case 86: // (v)
             Tetris.vrDisplay.requestPresent([{source: Tetris.renderer.domElement}]);
