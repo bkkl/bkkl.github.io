@@ -13,7 +13,8 @@ if (!window.requestAnimationFrame) {
 window.Tetris = window.Tetris || {};
 Tetris.sounds = {};
 //BKL used to control left eye / right eye layers. (0 = both, 1=left, 2=right)
-var VR_layers = 0;
+var VR_layers = 0; // active block
+var VR_layers2 = 0; // background blocks
 // BKL used to create easy level 
 //BKL global for gamepad
 var gamepadconnected = 0;
@@ -389,7 +390,11 @@ Tetris.addStaticBlock = function (x, y, z) {
     mesh.position.x = (x - Tetris.boundingBoxConfig.splitX / 2) * Tetris.blockSize + Tetris.blockSize / 2;
     mesh.position.y = (y - Tetris.boundingBoxConfig.splitY / 2) * Tetris.blockSize + Tetris.blockSize / 2;
     mesh.position.z = (z - Tetris.boundingBoxConfig.splitZ / 2) * Tetris.blockSize + Tetris.blockSize / 2;
-
+//bkl - force background mesh to be viewable by only one eye	
+	mesh.layers.set(VR_layers2);
+	mesh.children["0"].layers.set(VR_layers2);
+	mesh.children["1"].layers.set(VR_layers2);
+// end BKL	
     Tetris.scene.add(mesh);
     Tetris.staticBlocks[x][y][z] = mesh;
 };
@@ -497,13 +502,14 @@ window.addEventListener('keydown', function (event) {
 			level = 0;
             break;		
 		case 53: //5
-			Tetris.camera.translateZ(-50);
-            Tetris.sounds["score"].play();
+				VR_layers2 = 1;
 			break;			
 			 
 		case 54: //6
-			Tetris.camera.position.z = Tetris.camera.position.z-50;
-            Tetris.sounds["score"].play();
+				VR_layers2 = 2;
+			break;	 
+		case 55: //7
+				VR_layers2 = 0;
 			break;	 
 
     }
