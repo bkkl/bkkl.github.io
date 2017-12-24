@@ -1630,8 +1630,8 @@ Tetris.start = function () {
     var texture2 = THREE.ImageUtils.loadTexture( 'img/crate.jpg' );
 	var material1 = new THREE.MeshLambertMaterial({ map: texture1});
 	var material2 = new THREE.MeshLambertMaterial({ map: texture2});
-	var material3 = new THREE.MeshLambertMaterial({ color: 0xff0000, wireframe: false, transparent: true, opacity:0.5});
-	var material4 = new THREE.MeshPhongMaterial({ color: 0x00ff00, wireframe: false, transparent: true, opacity:0.5});
+	var material3 = new THREE.MeshLambertMaterial({ color: 0xff0000, wireframe: false, transparent: false, opacity:0.5});
+	var material4 = new THREE.MeshPhongMaterial({ color: 0x00ff00, wireframe: false, transparent: false, opacity:0.5});
 	var outlineMaterial1 = new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.BackSide } );
 	
 	Tetris.cube1 = new THREE.Mesh(geometry2, material3);
@@ -2314,8 +2314,8 @@ Tetris.addPoints = function (n) {
     Tetris.currentPoints += n;
     
 //	Tetris.pointsDOM.innerHTML = Tetris.currentPoints; 
-	Tetris.pointsDOM.innerHTML = z_avg; 
-    Cufon.replace('#points');
+//	Tetris.pointsDOM.innerHTML = z_avg; 
+//    Cufon.replace('#points');
 //    Tetris.sounds["score"].play();
 	// update score in 3D BKL
 	// current points		
