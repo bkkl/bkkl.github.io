@@ -19,6 +19,11 @@ The hope is the mainline repositories for VR development will explicitly documen
 to enable Amblyopia friendly features in nearly all VR games and apps. It's estimated that 
 about 2 to 3 percent of the U.S. population has some degree of amblyopia.
 
+All information and links on this site should be considered experimental coding examples and
+not intended for actual therapeutic use.  Any experimentation should be done under the 
+supervision of medical professionals.  All  safety and use guidelines for the VR gaming system 
+should be followed.  
+
 
 https://www.vrlazyeye.com/
 
